@@ -1,16 +1,19 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import type { PrimaryData } from "./websocket";
+import { motion } from "framer-motion";
 
 type BidTableProps = {
-  data: PrimaryData[];
+  data: {
+    symbol: string;
+    highestBid: number;
+    highestOffer: number;
+  }[];
   type: "futures" | "spot";
 };
 
@@ -18,31 +21,42 @@ const BidTable: React.FC<BidTableProps> = (props) => {
   return (
     <div className="flex flex-col items-center">
       <h2>{props.type === "futures" ? "Futuros" : "Acciones"}</h2>
+      <div className="flex items-center py-4"></div>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[250px]">Especie</TableHead>
-            <TableHead>Closing Price</TableHead>
-            <TableHead>Last Price</TableHead>
-            <TableHead>Bid</TableHead>
+            <TableHead>Offer Price</TableHead>
+            <TableHead>Bid Price</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {props.data
             .filter((val) =>
               props.type === "futures"
-                ? val.instrumentId.symbol.includes("/")
-                : !val.instrumentId.symbol.includes("/"),
+                ? val.symbol.includes("/")
+                : !val.symbol.includes("/"),
             )
             .map((bid, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium">
-                  {bid.instrumentId.symbol}
+                <TableCell className="font-medium">{bid.symbol}</TableCell>
+                <TableCell>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {bid.highestOffer}
+                  </motion.div>
                 </TableCell>
-                <TableCell>{bid.marketData.CL?.price}</TableCell>
-                <TableCell>{bid.marketData.LA?.price}</TableCell>
-                <TableCell className="text-right">
-                  {bid.marketData.BI[0]?.price}
+                <TableCell>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {bid.highestBid}
+                  </motion.div>
                 </TableCell>
               </TableRow>
             ))}

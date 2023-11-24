@@ -1,7 +1,7 @@
 import { getServerAuthSession } from "~/server/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import WebSocketComponent from "~/components/websocket";
+import PrimaryTables from "~/components/primary-tables";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -21,9 +21,11 @@ export default async function Home() {
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center">
+        <h1 className="text-5xl font-extrabold tracking-tight">
+          Docta Capital
+        </h1>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="text-center text-lg">Dash!</div>
-          <WebSocketComponent />
+          <PrimaryTables />
         </div>
       </div>
     </main>
