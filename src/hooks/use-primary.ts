@@ -30,6 +30,14 @@ export type PrimaryData = {
     };
 };
 
+export type PrimaryDto = {
+    symbol: string;
+    expiration: string;
+    highestBid: number;
+    highestOffer: number;
+};
+
+
 export const usePrimary = () => {
     const [bids, setBids] = useState<PrimaryData[]>([]);
     useEffect(() => {
@@ -41,11 +49,15 @@ export const usePrimary = () => {
 
         socket.addEventListener("message", (event) => {
             const primaryData = event.data as string;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const data: PrimaryData = JSON.parse(primaryData);
-            setBids((prevValues) => {
-                return [...prevValues, data];
-            });
+            // Had to make this try/catch because data wasn't always JSON formatted
+            try {
+                const data = JSON.parse(primaryData) as PrimaryData;
+                setBids((prevValues) => {
+                    return [...prevValues, data];
+                });
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
         });
 
         socket.addEventListener("error", (event) => {
@@ -61,23 +73,21 @@ export const usePrimary = () => {
         };
     }, []);
 
-    useEffect(() => {
-        const futures = bids.filter((val) => !val.instrumentId.symbol.includes("/"))
-        console.log('futures', futures);
-    }, [bids])
+    const speciesArray: PrimaryDto[] = [];
+    bids.forEach((bid: PrimaryData) => {
+        const symbol: string = bid.instrumentId.symbol;
+        const expirationMatch = symbol.match(/(\d+hs|CI)/); // Match for 24hs, 48hs, or C.I
 
-    const speciesArray: { symbol: string; highestBid: number; highestOffer: number }[] = [];
-
-    bids.forEach((item: PrimaryData) => {
-        const symbol: string = item.instrumentId.symbol;
+        // Default expiration to "CI" if no match is found
+        const expiration: string = expirationMatch ? expirationMatch[0] : "CI";
 
         // Check BI (Bid) prices
-        if (item.marketData.BI) {
-            item.marketData.BI.forEach((bi: MarketDataItem) => {
-                const existingSpecies = speciesArray.find(species => species.symbol === symbol);
+        if (bid.marketData.BI) {
+            bid.marketData.BI.forEach((bi: MarketDataItem) => {
+                const existingSpecies = speciesArray.find((species) => species.symbol === symbol);
 
                 if (!existingSpecies) {
-                    speciesArray.push({ symbol, highestBid: bi.price, highestOffer: 0 });
+                    speciesArray.push({ symbol, expiration, highestBid: bi.price, highestOffer: 0 });
                 } else {
                     existingSpecies.highestBid = Math.max(existingSpecies.highestBid, bi.price);
                 }
@@ -85,18 +95,17 @@ export const usePrimary = () => {
         }
 
         // Check OF (Offer) prices
-        if (item.marketData.OF) {
-            item.marketData.OF.forEach((of: MarketDataItem) => {
-                const existingSpecies = speciesArray.find(species => species.symbol === symbol);
+        if (bid.marketData.OF) {
+            bid.marketData.OF.forEach((of: MarketDataItem) => {
+                const existingSpecies = speciesArray.find((species) => species.symbol === symbol);
 
                 if (!existingSpecies) {
-                    speciesArray.push({ symbol, highestBid: 0, highestOffer: of.price });
+                    speciesArray.push({ symbol, expiration, highestBid: 0, highestOffer: of.price });
                 } else {
                     existingSpecies.highestOffer = Math.max(existingSpecies.highestOffer, of.price);
                 }
             });
         }
     });
-
     return { speciesArray }
 };

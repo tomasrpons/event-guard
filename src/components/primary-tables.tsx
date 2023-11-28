@@ -2,6 +2,8 @@
 import React from "react";
 import BidTable from "./bid-table";
 import { usePrimary } from "~/hooks/use-primary";
+import { DataTable } from "~/app/dashboard/components/data-table";
+import { columns } from "~/app/dashboard/components/columns";
 
 type PrimaryTablesProps = {
   // Whatever props
@@ -10,10 +12,13 @@ type PrimaryTablesProps = {
 const PrimaryTables: React.FC<PrimaryTablesProps> = (props) => {
   const { speciesArray } = usePrimary();
 
+  const futures = speciesArray.filter(({symbol}) => symbol.includes("/"));
+  const spot = speciesArray.filter(({symbol}) => !symbol.includes("/"));
+
   return (
     <div className="flex w-full flex-row justify-around">
-      <BidTable data={speciesArray} type="futures" />
-      <BidTable data={speciesArray} type="spot" />
+      <DataTable data={futures} columns={columns} />
+      <DataTable data={spot} columns={columns} />
     </div>
   );
 };

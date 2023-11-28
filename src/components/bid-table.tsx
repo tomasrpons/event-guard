@@ -7,13 +7,10 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { motion } from "framer-motion";
+import type { PrimaryDto } from "~/hooks/use-primary";
 
 type BidTableProps = {
-  data: {
-    symbol: string;
-    highestBid: number;
-    highestOffer: number;
-  }[];
+  data: PrimaryDto[];
   type: "futures" | "spot";
 };
 
