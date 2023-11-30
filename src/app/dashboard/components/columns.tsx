@@ -28,6 +28,19 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     },
   },
   {
+    accessorKey: "bidSize",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Bid size" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="truncate font-medium">
+          {row.getValue("bidSize")}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "highestOffer",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Offer price" />
@@ -36,6 +49,19 @@ export const columns: ColumnDef<PrimaryDto>[] = [
       return (
         <span className="max-w-[500px] truncate font-medium">
           {row.getValue("highestOffer")}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "offerSize",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Offer size" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="truncate font-medium">
+          {row.getValue("offerSize")}
         </span>
       );
     },

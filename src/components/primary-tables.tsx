@@ -1,12 +1,11 @@
 "use client";
 import React from "react";
-import BidTable from "./bid-table";
 import { usePrimary } from "~/hooks/use-primary";
 import { DataTable } from "~/app/dashboard/components/data-table";
 import { columns } from "~/app/dashboard/components/columns";
 
 type PrimaryTablesProps = {
-  // Whatever props
+  type: 'futures' | 'spot'
 };
 
 const PrimaryTables: React.FC<PrimaryTablesProps> = (props) => {
@@ -16,9 +15,8 @@ const PrimaryTables: React.FC<PrimaryTablesProps> = (props) => {
   const spot = speciesArray.filter(({symbol}) => !symbol.includes("/"));
 
   return (
-    <div className="flex w-full flex-row justify-around">
-      <DataTable data={futures} columns={columns} />
-      <DataTable data={spot} columns={columns} />
+    <div className="flex w-full flex-col">
+      <DataTable data={props.type === 'futures' ? futures : spot} columns={columns} />
     </div>
   );
 };

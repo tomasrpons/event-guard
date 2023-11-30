@@ -33,6 +33,8 @@ export type PrimaryData = {
 export type PrimaryDto = {
     symbol: string;
     expiration: string;
+    bidSize: number;
+    offerSize: number;
     highestBid: number;
     highestOffer: number;
 };
@@ -77,8 +79,6 @@ export const usePrimary = () => {
     bids.forEach((bid: PrimaryData) => {
         const symbol: string = bid.instrumentId.symbol;
         const expirationMatch = symbol.match(/(\d+hs|CI)/); // Match for 24hs, 48hs, or C.I
-
-        // Default expiration to "CI" if no match is found
         const expiration: string = expirationMatch ? expirationMatch[0] : "CI";
 
         // Check BI (Bid) prices
@@ -87,9 +87,17 @@ export const usePrimary = () => {
                 const existingSpecies = speciesArray.find((species) => species.symbol === symbol);
 
                 if (!existingSpecies) {
-                    speciesArray.push({ symbol, expiration, highestBid: bi.price, highestOffer: 0 });
+                    speciesArray.push({
+                        symbol,
+                        expiration,
+                        highestBid: bi.price,
+                        highestOffer: 0,
+                        bidSize: bi.size || 0,
+                        offerSize: 0,
+                    });
                 } else {
                     existingSpecies.highestBid = Math.max(existingSpecies.highestBid, bi.price);
+                    existingSpecies.bidSize = Math.max(existingSpecies.bidSize, bi.size || 0);
                 }
             });
         }
@@ -100,12 +108,21 @@ export const usePrimary = () => {
                 const existingSpecies = speciesArray.find((species) => species.symbol === symbol);
 
                 if (!existingSpecies) {
-                    speciesArray.push({ symbol, expiration, highestBid: 0, highestOffer: of.price });
+                    speciesArray.push({
+                        symbol,
+                        expiration,
+                        highestBid: 0,
+                        highestOffer: of.price,
+                        bidSize: 0,
+                        offerSize: of.size || 0,
+                    });
                 } else {
                     existingSpecies.highestOffer = Math.max(existingSpecies.highestOffer, of.price);
+                    existingSpecies.offerSize = Math.max(existingSpecies.offerSize, of.size || 0);
                 }
             });
         }
     });
+
     return { speciesArray }
 };
