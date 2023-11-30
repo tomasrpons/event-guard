@@ -34,8 +34,8 @@ const PrimaryTables: React.FC<PrimaryTablesProps> = (props) => {
             className={cn(
               "flex cursor-pointer items-center px-4",
               selectedTab?.startsWith(tab.name)
-                ? "font-bold text-white"
-                : "font-medium text-black",
+                ? "font-bold text-primary"
+                : "font-medium text-muted-foreground",
             )}
           >
             {tab.name}

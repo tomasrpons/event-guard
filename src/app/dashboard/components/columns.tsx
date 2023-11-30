@@ -1,9 +1,10 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-
+import { animate } from "framer-motion";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import type { PrimaryDto } from "~/hooks/use-primary";
+import { useEffect, useRef } from "react";
 
 export const columns: ColumnDef<PrimaryDto>[] = [
   {
@@ -21,8 +22,8 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("highestBid")}
+        <span className="truncate font-medium">
+          <Counter from={0} to={row.getValue("highestBid")} />
         </span>
       );
     },
@@ -35,7 +36,7 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     cell: ({ row }) => {
       return (
         <span className="truncate font-medium">
-          {row.getValue("bidSize")}
+          <Counter from={0} to={row.getValue("bidSize")} />
         </span>
       );
     },
@@ -47,8 +48,8 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("highestOffer")}
+        <span className="truncate font-medium">
+          <Counter from={0} to={row.getValue("highestOffer")} />
         </span>
       );
     },
@@ -61,7 +62,7 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     cell: ({ row }) => {
       return (
         <span className="truncate font-medium">
-          {row.getValue("offerSize")}
+          <Counter from={0} to={row.getValue("offerSize")} />
         </span>
       );
     },
@@ -83,3 +84,25 @@ export const columns: ColumnDef<PrimaryDto>[] = [
     },
   },
 ];
+
+const Counter = (input: { from: number; to: number }) => {
+  const { from, to } = input;
+  const nodeRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const node = nodeRef.current;
+
+    const controls = animate(from, to, {
+      duration: 1,
+      onUpdate(value: number) {
+        if (node) {
+          node.textContent = value.toFixed(2);
+        }
+      },
+    });
+
+    return () => controls.stop();
+  }, [from, to]);
+
+  return <p ref={nodeRef} />;
+};

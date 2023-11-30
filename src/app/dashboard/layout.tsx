@@ -1,5 +1,3 @@
-import "~/styles/globals.css";
-
 import Link from "next/link";
 export default function DashboardLayout({
   children,
@@ -7,7 +5,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="bg-[#4263eb] min-h-screen text-white">
+    <main className="min-h-screen">
       <div className="flex justify-end p-2">
         <Link
           href={"/api/auth/signout"}
@@ -17,7 +15,7 @@ export default function DashboardLayout({
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-5xl font-extrabold tracking-tight">
+        <h1 className="text-5xl font-extrabold tracking-tight text-primary">
           Docta Capital
         </h1>
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
