@@ -32,7 +32,7 @@ export type PrimaryData = {
 
 export type PrimaryDto = {
     symbol: string;
-    expiration: string;
+    expiration?: string;
     bidSize: number;
     offerSize: number;
     highestBid: number;

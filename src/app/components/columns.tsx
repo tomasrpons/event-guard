@@ -10,15 +10,15 @@ export const columns: ColumnDef<PrimaryDto>[] = [
   {
     accessorKey: "symbol",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Especie" />
+      <DataTableColumnHeader column={column} title="Ticker" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("symbol")}</div>,
+    cell: ({ row }) => <div>{row.getValue("symbol")}</div>,
     enableSorting: true,
   },
   {
     accessorKey: "highestBid",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bid price" />
+      <DataTableColumnHeader column={column} title="Last" />
     ),
     cell: ({ row }) => {
       return (
@@ -31,7 +31,7 @@ export const columns: ColumnDef<PrimaryDto>[] = [
   {
     accessorKey: "bidSize",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bid size" />
+      <DataTableColumnHeader column={column} title="Variación" />
     ),
     cell: ({ row }) => {
       return (
@@ -44,7 +44,7 @@ export const columns: ColumnDef<PrimaryDto>[] = [
   {
     accessorKey: "highestOffer",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Offer price" />
+      <DataTableColumnHeader column={column} title="Volume" />
     ),
     cell: ({ row }) => {
       return (
@@ -57,7 +57,7 @@ export const columns: ColumnDef<PrimaryDto>[] = [
   {
     accessorKey: "offerSize",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Offer size" />
+      <DataTableColumnHeader column={column} title="TC" />
     ),
     cell: ({ row }) => {
       return (
@@ -65,22 +65,6 @@ export const columns: ColumnDef<PrimaryDto>[] = [
           <Counter from={0} to={row.getValue("offerSize")} />
         </span>
       );
-    },
-  },
-  {
-    accessorKey: "expiration",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Vencimiento" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <span className="max-w-[500px] truncate font-medium">
-          {row.getValue("expiration")}
-        </span>
-      );
-    },
-    filterFn: (row, id, value: string[]) => {
-      return value.includes(row.getValue(id));
     },
   },
 ];
