@@ -1,10 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { PrimaryDto, usePrimary } from "~/hooks/use-primary";
-import { DataTable } from "~/app/components/data-table";
-import { columns } from "~/app/components/columns";
+import { usePrimary } from "~/hooks/use-primary";
+import { DataTable } from "~/app/components/futures/data-table";
+import { columns } from "~/app/components/futures/columns";
 import { cn } from "~/lib/utils";
-import { ColumnDef } from "@tanstack/react-table";
 
 const tabs = [
   {
