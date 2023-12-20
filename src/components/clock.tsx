@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
+import { cn } from "~/lib/utils";
 
 type ClockProps = {
   initial: Date;
+  className?: string;
 };
 
-const Clock: React.FC<ClockProps> = ({ initial }) => {
+const Clock: React.FC<ClockProps> = ({ initial, className }) => {
   const [time, setTime] = useState(initial);
 
   const tick = () => {
@@ -21,7 +23,7 @@ const Clock: React.FC<ClockProps> = ({ initial }) => {
   });
 
   return (
-    <div className="tabular-nums">
+    <div className={cn("tabular-nums", className)}>
       {time.toLocaleTimeString("es-AR", {
         timeZone: "America/Argentina/Cordoba",
         hour: "numeric",

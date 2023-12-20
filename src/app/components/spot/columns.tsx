@@ -44,25 +44,12 @@ export const columns: ColumnDef<PrimaryDto>[] = [
   {
     accessorKey: "highestOffer",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Volume" />
+      <DataTableColumnHeader column={column} title="Volumen" />
     ),
     cell: ({ row }) => {
       return (
         <span className="truncate font-medium">
           <Counter from={0} to={row.getValue("highestOffer")} />
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: "offerSize",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="TC" />
-    ),
-    cell: ({ row }) => {
-      return (
-        <span className="truncate font-medium">
-          <Counter from={0} to={row.getValue("offerSize")} />
         </span>
       );
     },
