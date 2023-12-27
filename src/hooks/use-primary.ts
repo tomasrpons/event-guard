@@ -32,32 +32,45 @@ export type PrimaryData = {
 
 export type PrimaryDto = {
     symbol: string;
-    expiration?: string;
+    highestBid: number;
     bidSize: number;
     offerSize: number;
-    highestBid: number;
     highestOffer: number;
-};
-
+} & PrimaryData
 
 export const usePrimary = () => {
-    const [bids, setBids] = useState<PrimaryData[]>([]);
+    const [marketData, setMarketData] = useState<Record<string, PrimaryDto>>({});
+
     useEffect(() => {
         const socket = new WebSocket("ws://localhost:3500");
-        console.log('holaaa');
+
         socket.addEventListener("open", (event) => {
             console.log("WebSocket connection opened:", event);
         });
 
         socket.addEventListener("message", (event) => {
             const primaryData = event.data as string;
-            console.log('primaryData', primaryData);
-            // Had to make this try/catch because data wasn't always JSON formatted
+
             try {
                 const data = JSON.parse(primaryData) as PrimaryData;
-                setBids((prevValues) => {
-                    return [...prevValues, data];
-                });
+                if (data?.instrumentId) {
+                    setMarketData((prevData) => {
+                        const symbol = data.instrumentId.symbol;
+                        const updatedData: PrimaryDto = {
+                            ...data,
+                            highestBid: data.marketData?.BI?.[0]?.price ?? 0,
+                            bidSize: data.marketData.BI?.[0]?.size ?? 0,
+                            offerSize: data.marketData.OF?.[0]?.size ?? 0,
+                            highestOffer: data.marketData.OF?.[0]?.price ?? 0,
+                            symbol: data.instrumentId.symbol
+                        };
+
+                        return {
+                            ...prevData,
+                            [symbol]: updatedData,
+                        };
+                    });
+                }
             } catch (error) {
                 console.error('Error parsing JSON:', error);
             }
@@ -72,11 +85,23 @@ export const usePrimary = () => {
         });
 
         return () => {
-            // socket.close();
+            socket.close();
         };
     }, []);
 
-    const speciesArray: PrimaryDto[] = [];
+    const futures: PrimaryDto[] = [];
+    const spot: PrimaryDto[] = [];
 
-    return { speciesArray }
+    // Separating market data into "futures" and "spot"
+    Object.values(marketData).forEach((data) => {
+        const symbol = data.instrumentId.symbol;
+
+        if (symbol.includes("48hs") || symbol.includes("24hs") || symbol.includes("CI")) {
+            futures.push(data);
+        } else {
+            spot.push(data);
+        }
+    });
+
+    return { spot, futures };
 };

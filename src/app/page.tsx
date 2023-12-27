@@ -10,10 +10,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import DolarCard from "~/components/dolar-card";
 
 export default function Home() {
-  const { speciesArray } = usePrimary();
-  console.log('speciesArray', speciesArray);
-  // const futures = speciesArray.filter(({ symbol }) => symbol.includes("/"));
-  // const spot = speciesArray.filter(({ symbol }) => !symbol.includes("/"));
+  const { futures, spot } = usePrimary();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -54,7 +51,7 @@ export default function Home() {
           </ScrollArea>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* <div>
+          <div>
             <h2 className="mb-2 text-3xl font-bold">Panel lider</h2>
             <DataTable data={futures} columns={spotColumns} />
           </div>
@@ -65,7 +62,7 @@ export default function Home() {
           <div>
             <h2 className="mb-2 text-3xl font-bold">Futuros</h2>
             <DataTable data={spot} columns={futureColumns} />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
