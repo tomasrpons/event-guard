@@ -1,45 +1,32 @@
 import { useEffect, useState } from "react";
 
-type MarketDataItem = {
-    price: number;
-    size: number;
-}
-
-type Instrument = {
-    marketId: string;
-    symbol: string;
+export type TickerDto = {
+    ticker: string;
+    bidVolume: number;
+    lastPrice: number;
+    variation?: number;
 };
 
-export type PrimaryData = {
-    type: string;
-    timestamp: number;
-    instrumentId: Instrument;
-    marketData: {
-        CL: {
-            price: number;
-            size: number;
-            date: number;
-        };
-        BI?: MarketDataItem[];
-        LA: {
-            price: number;
-            size: number;
-            date: string;
-        };
-        OF?: MarketDataItem[];
-    };
-};
+export type MarketType = "Future" | "Spot";
 
-export type PrimaryDto = {
-    symbol: string;
-    highestBid: number;
-    bidSize: number;
-    offerSize: number;
-    highestOffer: number;
-} & PrimaryData
+export type TickerValues = {
+    key: "bidVolume" | "lastPrice";
+    value: number;
+};
+export type VariableType = "l1" | "l2";
+export type VariableName = "Ticker" | "FutureRates";
+
+export type EventGuardTickerDto = {
+    ticker: string;
+    market: MarketType;
+    variableType: VariableType;
+    variableName: VariableName;
+    values: TickerValues[];
+};
 
 export const usePrimary = () => {
-    const [marketData, setMarketData] = useState<Record<string, PrimaryDto>>({});
+    const [futures, setFutures] = useState<Record<string, TickerDto>>({});
+    const [spot, setSpot] = useState<Record<string, TickerDto>>({});
 
     useEffect(() => {
         const socket = new WebSocket("ws://localhost:3500");
@@ -52,27 +39,36 @@ export const usePrimary = () => {
             const primaryData = event.data as string;
 
             try {
-                const data = JSON.parse(primaryData) as PrimaryData;
-                if (data?.instrumentId) {
-                    setMarketData((prevData) => {
-                        const symbol = data.instrumentId.symbol;
-                        const updatedData: PrimaryDto = {
-                            ...data,
-                            highestBid: data.marketData?.BI?.[0]?.price ?? 0,
-                            bidSize: data.marketData.BI?.[0]?.size ?? 0,
-                            offerSize: data.marketData.OF?.[0]?.size ?? 0,
-                            highestOffer: data.marketData.OF?.[0]?.price ?? 0,
-                            symbol: data.instrumentId.symbol
-                        };
+                const data = JSON.parse(primaryData) as EventGuardTickerDto;
 
-                        return {
-                            ...prevData,
-                            [symbol]: updatedData,
-                        };
-                    });
+                // Extracting relevant data from the received message
+                const { ticker, market, values } = data;
+                // Updating the state based on market type
+                if (market === "Future") {
+                    setFutures((prev) => ({
+                        ...prev,
+                        [ticker]: {
+                            ...prev[ticker],
+                            ticker,
+                            bidVolume: values.find((v) => v.key === "bidVolume")?.value ?? 0,
+                            lastPrice: values.find((v) => v.key === "lastPrice")?.value ?? 0,
+                            // Add other properties as needed
+                        },
+                    }));
+                } else if (market === "Spot") {
+                    setSpot((prev) => ({
+                        ...prev,
+                        [ticker]: {
+                            ...prev[ticker],
+                            ticker,
+                            bidVolume: values.find((v) => v.key === "bidVolume")?.value ?? 0,
+                            lastPrice: values.find((v) => v.key === "lastPrice")?.value ?? 0,
+                            // Add other properties as needed
+                        },
+                    }));
                 }
             } catch (error) {
-                console.error('Error parsing JSON:', error);
+                console.error("Error parsing JSON:", error);
             }
         });
 
@@ -89,19 +85,10 @@ export const usePrimary = () => {
         };
     }, []);
 
-    const futures: PrimaryDto[] = [];
-    const spot: PrimaryDto[] = [];
+    useEffect(() => {
+        console.log("futures", futures);
+        console.log("spot", spot);
+    }, [spot, futures]);
 
-    // Separating market data into "futures" and "spot"
-    Object.values(marketData).forEach((data) => {
-        const symbol = data.instrumentId.symbol;
-
-        if (symbol.includes("48hs") || symbol.includes("24hs") || symbol.includes("CI")) {
-            futures.push(data);
-        } else {
-            spot.push(data);
-        }
-    });
-
-    return { spot, futures };
+    return { spot: Object.values(spot), futures: Object.values(futures) };
 };
