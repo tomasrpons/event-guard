@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -67,13 +67,17 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="mb-12 space-y-4">
       <DataTableToolbar table={table} />
-      <div className="rounded-md border overflow-auto relative h-48">
+      {/* <div className="relative h-48 overflow-auto rounded-md border"> */}
+      <ScrollArea className="h-[400px] overflow-auto rounded-md border">
         <Table>
           <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="sticky top-0 bg-secondary hover:bg-secondary"
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} colSpan={header.colSpan}>
@@ -119,8 +123,10 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
+          <ScrollBar orientation="horizontal" />
         </Table>
-      </div>
+      </ScrollArea>
+      {/* </div> */}
     </div>
   );
 }

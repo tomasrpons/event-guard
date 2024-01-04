@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 export default function Home() {
   const { futures, spot } = usePrimary();
-  const waitlist = true;
+  const waitlist = false;
 
   if (waitlist) {
     redirect("waitlist");
@@ -64,10 +64,33 @@ export default function Home() {
           </div> */}
           <div>
             <h2 className="mb-2 text-3xl font-bold">Futuros</h2>
-            <DataTable data={futures} columns={futureColumns} />
+            {/* <DataTable data={futures} columns={futureColumns} /> */}
+            <DataTable
+              data={[
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
+              ]}
+              columns={futureColumns}
+            />
           </div>
         </div>
       </div>
     </div>
   );
 }
+// ticker: string;
+// bidVolume: number;
+// lastPrice: number;
+// variation?: number;
