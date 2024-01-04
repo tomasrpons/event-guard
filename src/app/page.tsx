@@ -3,7 +3,8 @@
 import { usePrimary } from "~/hooks/use-primary";
 import { columns as futureColumns } from "~/app/components/futures/columns";
 import { columns as spotColumns } from "~/app/components/spot/columns";
-import { DataTable } from "./components/futures/data-table";
+import { DataTable as FuturesDataTable } from "./components/futures/data-table";
+import { DataTable as SpotDataTable } from "./components/spot/data-table";
 import { Input } from "~/components/ui/input";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import DolarCard from "~/components/dolar-card";
@@ -56,7 +57,7 @@ export default function Home() {
         <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <h2 className="mb-2 text-3xl font-bold">Panel lider</h2>
-            <DataTable data={spot} columns={spotColumns} />
+            <SpotDataTable data={spot} columns={spotColumns} />
           </div>
           {/* <div>
             <h2 className="mb-2 text-3xl font-bold">Cedears</h2>
@@ -65,7 +66,7 @@ export default function Home() {
           <div>
             <h2 className="mb-2 text-3xl font-bold">Futuros</h2>
             {/* <DataTable data={futures} columns={futureColumns} /> */}
-            <DataTable
+            <FuturesDataTable
               data={[
                 { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
                 { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
