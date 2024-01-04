@@ -69,7 +69,6 @@ export function DataTable<TData, TValue>({
   return (
     <div className="mb-12 space-y-4">
       <DataTableToolbar table={table} />
-      {/* <div className="relative h-48 overflow-auto rounded-md border"> */}
       <ScrollArea className="h-[400px] overflow-auto rounded-md border">
         <Table>
           <TableHeader className="sticky top-0">
