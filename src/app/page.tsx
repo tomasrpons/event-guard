@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 
 export default function Home() {
   const { futures, spot } = usePrimary();
-  const waitlist = false;
+  const waitlist = true;
 
   if (waitlist) {
     redirect("waitlist");
