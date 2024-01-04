@@ -3,14 +3,19 @@
 import { usePrimary } from "~/hooks/use-primary";
 import { columns as futureColumns } from "~/app/components/futures/columns";
 import { columns as spotColumns } from "~/app/components/spot/columns";
-import { columns as cedearColumns } from "~/app/components/cedears/columns";
 import { DataTable } from "./components/futures/data-table";
 import { Input } from "~/components/ui/input";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import DolarCard from "~/components/dolar-card";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   const { futures, spot } = usePrimary();
+  const waitlist = true;
+
+  if (waitlist) {
+    redirect("waitlist");
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
@@ -48,7 +53,7 @@ export default function Home() {
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-2">
+        <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <h2 className="mb-2 text-3xl font-bold">Panel lider</h2>
             <DataTable data={spot} columns={spotColumns} />

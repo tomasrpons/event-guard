@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "~/components/providers";
 import SiteHeader from "~/components/site-header";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
+import { redirect } from "next/navigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,8 +38,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="relative flex min-h-screen flex-col pb-6">
-              <SiteHeader />
+            <div className="relative flex min-h-screen flex-col">
               {children}
             </div>
             <TailwindIndicator />
