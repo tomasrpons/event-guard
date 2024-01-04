@@ -85,10 +85,5 @@ export const usePrimary = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log("futures", futures);
-        console.log("spot", spot);
-    }, [spot, futures]);
-
     return { spot: Object.values(spot), futures: Object.values(futures) };
 };
