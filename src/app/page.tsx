@@ -2,17 +2,19 @@
 
 import { usePrimary } from "~/hooks/use-primary";
 import { columns as futureColumns } from "~/app/components/futures/columns";
-import { columns as spotColumns } from "~/app/components/spot/columns";
+import { columns as stockColumns } from "~/app/components/stock/columns";
 import { DataTable as FuturesDataTable } from "./components/futures/data-table";
-import { DataTable as SpotDataTable } from "./components/spot/data-table";
+import { DataTable as StockDataTable } from "./components/stock/data-table";
 import { Input } from "~/components/ui/input";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import DolarCard from "~/components/dolar-card";
 import { redirect } from "next/navigation";
+import { useStratexContext } from "../hooks/wizard-hooks";
+import { useEffect } from "react";
 
 export default function Home() {
-  const { futures, spot } = usePrimary();
-  const waitlist = true;
+  const waitlist = false;
+  const { futures, stocks } = useStratexContext();
 
   if (waitlist) {
     redirect("waitlist");
@@ -20,8 +22,8 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
-      <div className="container flex flex-col items-center justify-start gap-4 px-4">
-        <div className="w-full rounded-md border p-4">
+      <div className="container flex flex-col items-center justify-start gap-4 2xl:mx-0 2xl:max-w-none 2xl:px-0">
+        {/* <div className="w-full rounded-md border p-4">
           <Input
             placeholder="Filtrar ticker..."
             className="h-8 w-[150px] text-black lg:w-[250px]"
@@ -53,45 +55,18 @@ export default function Home() {
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-        </div>
-        <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2">
+        </div> */}
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
           <div>
             <h2 className="mb-2 text-3xl font-bold">Panel lider</h2>
-            <SpotDataTable data={spot} columns={spotColumns} />
+            <StockDataTable data={stocks} columns={stockColumns} />
           </div>
-          {/* <div>
-            <h2 className="mb-2 text-3xl font-bold">Cedears</h2>
-            <DataTable data={spot} columns={cedearColumns} />
-          </div> */}
           <div>
             <h2 className="mb-2 text-3xl font-bold">Futuros</h2>
-            {/* <DataTable data={futures} columns={futureColumns} /> */}
-            <FuturesDataTable
-              data={[
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-                { ticker: "gal", bidVolume: 32, lastPrice: 32, variation: 4 },
-              ]}
-              columns={futureColumns}
-            />
+            <FuturesDataTable data={futures} columns={futureColumns} />
           </div>
         </div>
       </div>
     </div>
   );
 }
-// ticker: string;
-// bidVolume: number;
-// lastPrice: number;
-// variation?: number;

@@ -7,7 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "~/components/providers";
 import SiteHeader from "~/components/site-header";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
-import { redirect } from "next/navigation";
+import StratexProvider from "~/context/stratex/stratex-provider.component";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,7 +39,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <div className="relative flex min-h-screen flex-col">
-              {children}
+              <SiteHeader />
+              <StratexProvider>{children}</StratexProvider>
             </div>
             <TailwindIndicator />
           </ThemeProvider>
