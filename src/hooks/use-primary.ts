@@ -48,10 +48,6 @@ export const usePrimary = () => {
         const socket = new WebSocket("ws://localhost:3500");
         setSocket(socket);
 
-        socket.addEventListener("open", (event) => {
-            console.log("WebSocket connection opened:", event);
-        });
-
         socket.addEventListener("message", (event) => {
             const primaryData = event.data as string;
 
@@ -148,10 +144,6 @@ export const usePrimary = () => {
         socket.addEventListener("error", (event) => {
             console.error("WebSocket error:", event);
 
-        });
-
-        socket.addEventListener("close", (event) => {
-            console.log("WebSocket connection closed:", event);
         });
 
     }, []);
