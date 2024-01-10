@@ -1,16 +1,11 @@
 "use client";
 
-import { usePrimary } from "~/hooks/use-primary";
 import { columns as futureColumns } from "~/app/components/futures/columns";
 import { columns as stockColumns } from "~/app/components/stock/columns";
 import { DataTable as FuturesDataTable } from "./components/futures/data-table";
 import { DataTable as StockDataTable } from "./components/stock/data-table";
-import { Input } from "~/components/ui/input";
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import DolarCard from "~/components/dolar-card";
 import { redirect } from "next/navigation";
 import { useStratexContext } from "../hooks/wizard-hooks";
-import { useEffect } from "react";
 
 export default function Home() {
   const waitlist = false;
