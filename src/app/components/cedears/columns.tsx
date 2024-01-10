@@ -3,16 +3,16 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { animate } from "framer-motion";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import type { PrimaryDto } from "~/hooks/use-primary";
+import type { TickerDto } from "~/hooks/use-primary";
 import { useEffect, useRef } from "react";
 
-export const columns: ColumnDef<PrimaryDto>[] = [
+export const columns: ColumnDef<TickerDto>[] = [
   {
-    accessorKey: "symbol",
+    accessorKey: "ticker",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ticker" />
     ),
-    cell: ({ row }) => <div>{row.getValue("symbol")}</div>,
+    cell: ({ row }) => <div>{row.getValue("ticker")}</div>,
     enableSorting: true,
   },
   {

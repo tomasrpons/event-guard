@@ -11,7 +11,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -73,19 +72,21 @@ export function DataTable<TData, TValue>({
           <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
-                key={headerGroup.id + "-header"}
+                key={headerGroup.id}
                 className="sticky top-0 bg-secondary hover:bg-secondary"
               >
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -94,15 +95,17 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   data-state={row.getIsSelected() && "selected"}
-                  key={row.id + "-row"}
+                  key={row.id}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id + "-cell"}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
+                    <>
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    </>
                   ))}
                 </TableRow>
               ))
@@ -120,7 +123,6 @@ export function DataTable<TData, TValue>({
           <ScrollBar orientation="horizontal" />
         </Table>
       </ScrollArea>
-      {/* </div> */}
     </div>
   );
 }

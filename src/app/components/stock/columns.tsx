@@ -2,12 +2,12 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import type { FutureDto } from "~/hooks/use-primary";
+import type { StockDto } from "~/hooks/use-primary";
 import Counter from "~/components/counter";
 import { cn } from "~/lib/utils";
 import { usePrevious } from "~/hooks/use-previous";
 
-export const columns: ColumnDef<FutureDto>[] = [
+export const columns: ColumnDef<StockDto>[] = [
   {
     accessorKey: "ticker",
     header: ({ column }) => (
@@ -81,23 +81,18 @@ export const columns: ColumnDef<FutureDto>[] = [
     },
   },
   {
-    accessorKey: "impliedInterestRate",
+    accessorKey: "dollarMEP",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tasa Implícita" />
+      <DataTableColumnHeader column={column} title="MEP" />
     ),
     cell: ({ row }) => {
-      const impliedInterestRate: number = row.getValue("impliedInterestRate");
-      const previousImpliedInterestRate = !isNaN(
-        usePrevious(impliedInterestRate),
-      )
-        ? usePrevious(impliedInterestRate)
+      const dollarMEP: number = row.getValue("dollarMEP");
+      const previousDollarMEP = !isNaN(usePrevious(dollarMEP))
+        ? usePrevious(dollarMEP)
         : 0;
       return (
         <span className="truncate font-medium">
-          <Counter
-            from={previousImpliedInterestRate}
-            to={impliedInterestRate}
-          />
+          <Counter from={previousDollarMEP} to={dollarMEP} />
         </span>
       );
     },
