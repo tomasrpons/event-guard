@@ -46,7 +46,7 @@ export const usePrimary = () => {
 
     useEffect(() => {
         // const socket = new WebSocket("ws://localhost:3500");
-        const socket = new WebSocket("ec2-54-174-10-108.compute-1.amazonaws.com:3500");
+        const socket = new WebSocket("ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500");
         setSocket(socket);
 
         socket.addEventListener("message", (event) => {
