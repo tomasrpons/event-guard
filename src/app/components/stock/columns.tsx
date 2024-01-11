@@ -80,21 +80,21 @@ export const columns: ColumnDef<StockDto>[] = [
       );
     },
   },
-  {
-    accessorKey: "dollarMEP",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="MEP" />
-    ),
-    cell: ({ row }) => {
-      const dollarMEP: number = row.getValue("dollarMEP");
-      const previousDollarMEP = !isNaN(usePrevious(dollarMEP))
-        ? usePrevious(dollarMEP)
-        : 0;
-      return (
-        <span className="truncate font-medium">
-          <Counter from={previousDollarMEP} to={dollarMEP} />
-        </span>
-      );
-    },
-  },
+  // {
+  //   accessorKey: "dollarMEP",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="MEP" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const dollarMEP: number = row.getValue("dollarMEP");
+  //     const previousDollarMEP = !isNaN(usePrevious(dollarMEP))
+  //       ? usePrevious(dollarMEP)
+  //       : 0;
+  //     return (
+  //       <span className="truncate font-medium">
+  //         <Counter from={previousDollarMEP} to={dollarMEP} />
+  //       </span>
+  //     );
+  //   },
+  // },
 ];

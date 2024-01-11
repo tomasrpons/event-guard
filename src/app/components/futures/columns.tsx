@@ -93,11 +93,12 @@ export const columns: ColumnDef<FutureDto>[] = [
         ? usePrevious(impliedInterestRate)
         : 0;
       return (
-        <span className="truncate font-medium">
+        <span className="truncate font-medium flex">
           <Counter
             from={previousImpliedInterestRate}
-            to={impliedInterestRate}
+            to={impliedInterestRate * 100}
           />
+          <span className="ml-1">%</span>
         </span>
       );
     },
