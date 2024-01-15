@@ -47,7 +47,10 @@ export const usePrimary = () => {
 
     useEffect(() => {
         // const socket = new WebSocket("ws://localhost:3500");
-        const socket = io("wss://ec2-54-174-10-108.compute-1.amazonaws.com:3500");
+        const socket = io("wss://api.remarkets.primary.com.ar?token=7UEI9DQgp6Dr1klQqFO64swVYnWDCMTse+4JUCaAt2A=", {
+            transports: ["websocket"],
+            forceNew: true,
+        });
         setSocket(socket);
 
         socket.on("message", (event) => {
