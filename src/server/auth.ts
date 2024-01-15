@@ -45,16 +45,16 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
-    redirect: (({ baseUrl }) => {
-      return `${baseUrl}/dashboard`
-    })
+    redirect: ({ baseUrl }) => {
+      return `${baseUrl}/dashboard`;
+    },
   },
-  adapter: DrizzleAdapter(db, mysqlTable),
+  // adapter: DrizzleAdapter(db, mysqlTable),
   providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
+    // GoogleProvider({
+    //   clientId: env.GOOGLE_CLIENT_ID,
+    //   clientSecret: env.GOOGLE_CLIENT_SECRET,
+    // }),
     /**
      * ...add more providers here.
      *

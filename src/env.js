@@ -10,27 +10,29 @@ export const env = createEnv({
     DATABASE_URL: z
       .string()
       .url()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL"
-      ),
+      .default('mysql://gjkkrfee3g1vvepkji82:pscale_pw_9GtesaN9XUZVCDdpeM6dhA9KD6ViD1EtE7Qob7qXysR@aws.connect.psdb.cloud/docta-capital?ssl={"rejectUnauthorized":true}'),
+      // .refine(
+      //   (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
+      //   "You forgot to change the default URL"
+      // ),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
     NEXTAUTH_SECRET:
       process.env.NODE_ENV === "production"
-        ? z.string()
+        ? z.string().optional()
         : z.string().optional(),
-    NEXTAUTH_URL: z.preprocess(
-      // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
-      // Since NextAuth.js automatically uses the VERCEL_URL if present.
-      (str) => process.env.VERCEL_URL ?? str,
-      // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string() : z.string().url()
-    ),
+    // NEXTAUTH_URL: z.preprocess(
+    //   // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
+    //   // Since NextAuth.js automatically uses the VERCEL_URL if present.
+    //   (str) => process.env.VERCEL_URL ?? str,
+    //   // VERCEL_URL doesn't include `https` so it cant be validated as a URL
+    //   process.env.VERCEL ? z.string() : z.string().url()
+    // ),
+    NEXTAUTH_URL:z.string().optional(),
     // Add ` on ID and SECRET if you want to make sure they're not empty
-    GOOGLE_CLIENT_ID: z.string(),
-    GOOGLE_CLIENT_SECRET: z.string(),
+    // GOOGLE_CLIENT_ID: z.string(),
+    // GOOGLE_CLIENT_SECRET: z.string(),
   },
 
   /**
@@ -39,7 +41,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_STRATEX_HOST: z.string().optional(),
+    
   },
 
   /**
@@ -51,8 +54,9 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    // GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    // GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    NEXT_PUBLIC_STRATEX_HOST: process.env.STRATEX_HOST,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
