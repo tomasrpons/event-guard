@@ -1,4 +1,5 @@
 "use client"
+import { io } from "socket.io-client";
 
 import { useEffect, useState } from "react";
 
@@ -42,14 +43,15 @@ export type EventGuardTickerDto = {
 export const usePrimary = () => {
     const [futures, setFutures] = useState<Record<string, FutureDto>>({});
     const [stocks, setStocks] = useState<Record<string, StockDto>>({});
-    const [socket, setSocket] = useState<WebSocket>()
+    const [socket, setSocket] = useState<unknown>()
 
     useEffect(() => {
         // const socket = new WebSocket("ws://localhost:3500");
-        const socket = new WebSocket("wss://ec2-54-174-10-108.compute-1.amazonaws.com:3500");
+        const socket = io("wss://ec2-54-174-10-108.compute-1.amazonaws.com:3500");
         setSocket(socket);
 
-        socket.addEventListener("message", (event) => {
+        socket.on("message", (event) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             const primaryData = event.data as string;
 
             try {
@@ -142,26 +144,25 @@ export const usePrimary = () => {
             }
         });
 
-        socket.addEventListener("error", (event) => {
+        socket.on("error", (event) => {
             console.error("WebSocket error:", event);
-
         });
 
     }, []);
 
-    useEffect(() => {
-        const handleBeforeUnload = () => {
-            if (socket) {
-                socket.close();
-            }
-        };
+    // useEffect(() => {
+    //     const handleBeforeUnload = () => {
+    //         if (socket) {
+    //             socket.close();
+    //         }
+    //     };
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
+    //     window.addEventListener('beforeunload', handleBeforeUnload);
 
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, [socket]);
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleBeforeUnload);
+    //     };
+    // }, [socket]);
 
     return { stocks: Object.values(stocks), futures: Object.values(futures) };
 };
