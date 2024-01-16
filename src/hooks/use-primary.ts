@@ -75,42 +75,34 @@ const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
     }
 };
 
-const updateFutures = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
-    const { ticker, values } = input;
-    const { tradeVolume, lastPrice } = values;
-    setFutures((prev) => ({
+const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.Dispatch<React.SetStateAction<Record<string, TickerDto | FutureDto | StockDto>>>) => {
+    const { ticker, values, tickerType } = inputData;
+    const { tradeVolume, lastPrice, variation, impliedInterestRate, dollarMEP } = values;
+    setTickerData((prev) => ({
         ...prev,
         [ticker]: {
             ...prev[ticker],
             ticker,
-            tradeVolume:
-                Number(tradeVolume?.value) ?? prev[ticker]?.tradeVolume,
-            lastPrice:
-                Number(lastPrice?.value) ?? prev[ticker]?.lastPrice,
+            tradeVolume: Number(tradeVolume?.value) ?? prev[ticker]?.tradeVolume,
+            lastPrice: Number(lastPrice?.value) ?? prev[ticker]?.lastPrice,
+            impliedInterestRate: (tickerType === "FUTURE") ? Number(impliedInterestRate?.value) ?? (prev[ticker] as FutureDto)?.impliedInterestRate : undefined,
+            variation: Number(variation?.value) ?? prev[ticker]?.variation,
+            dollarMEP: (tickerType === "STOCK") ? Number(dollarMEP?.value) ?? (prev[ticker] as StockDto)?.dollarMEP : undefined,
         },
     }));
 };
 
+const updateFutures = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
+    updateTickerValues(input, setFutures)
+};
+
 const updateStocks = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
-    const { ticker, values } = input;
-    const { tradeVolume, lastPrice } = values;
-    setStocks((prev) => ({
-        ...prev,
-        [ticker]: {
-            ...prev[ticker],
-            ticker,
-            tradeVolume:
-                Number(tradeVolume?.value) ?? prev[ticker]?.tradeVolume,
-            lastPrice:
-                Number(lastPrice?.value) ?? prev[ticker]?.lastPrice,
-        },
-    }));
+    updateTickerValues(input, setStocks)
 };
 
 const handleWebSocketMessage = (event: MessageEvent<string>, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
     const primaryData = event.data;
     const data = parsePrimaryData(primaryData);
-
     if (data) {
         const { ticker, values, variableType, variableName, tickerType } = data;
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
@@ -131,14 +123,12 @@ const handleWebSocketMessage = (event: MessageEvent<string>, setFutures: React.D
                     updateFutureRates({ ticker, values: { impliedInterestRate } }, setFutures);
                     break;
                 case "PRICE-CHANGE":
-                    const variation = values.find(
-                        (val) => val.key === "Price_change",
-                    );
+                    const variation = values.find((val) => val.key === "Price_change");
                     updatePriceChange({ ticker, tickerType, values: { variation } }, setStocks, setFutures);
                     break;
                 case "DOLLAR-MEP":
                     const dollarMEP = values.find((val) => val.key === "Dollar_mep");
-                    updatedolarMEP({ ticker, values: { dollarMEP } }, setStocks);
+                    updateDolarMEP({ ticker, values: { dollarMEP } }, setStocks);
                     break;
             }
         }
@@ -161,50 +151,23 @@ const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<
 };
 
 const updatePriceChange = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
-    const { values, ticker, tickerType } = input;
-    const { variation } = values
+    const { ticker, values, tickerType } = input;
+    const { variation } = values;
     switch (tickerType) {
         case "STOCK":
-            setStocks((prev) => ({
-                ...prev,
-                [ticker]: {
-                    ...prev[ticker],
-                    ticker,
-                    variation:
-                        Number(variation?.value) ?? prev[ticker]?.variation,
-                },
-            }));
+            updateTickerValues({ ticker, values: { variation } }, setStocks);
+            break;
         case "FUTURE":
-            setFutures((prev) => {
-                return {
-                    ...prev,
-                    [ticker]: {
-                        ...prev[ticker],
-                        ticker,
-                        variation: !isNaN(Number(variation?.value))
-                            ? Number(variation?.value)
-                            : prev[ticker]?.variation
-                                ? prev[ticker]?.variation
-                                : 0,
-                    },
-                };
-            });
+            updateTickerValues({ ticker, values: { variation } }, setFutures);
+            break;
     }
-}
+};
 
-const updatedolarMEP = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
+const updateDolarMEP = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
     const { ticker, values } = input;
     const { dollarMEP } = values;
-    setStocks((prev) => ({
-        ...prev,
-        [ticker]: {
-            ...prev[ticker],
-            ticker,
-            dollarMep:
-                Number(dollarMEP?.value) ?? prev[ticker]?.dollarMEP,
-        },
-    }));
-}
+    updateTickerValues({ ticker, values: { dollarMEP } }, setStocks);
+};
 
 export const usePrimary = () => {
     const [futures, setFutures] = useState<Record<string, FutureDto>>({});
@@ -216,8 +179,7 @@ export const usePrimary = () => {
             "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
         );
         setSocket(socket);
-        socket.addEventListener("message", (event) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+        socket.addEventListener("message", (event: MessageEvent<string>) => {
             handleWebSocketMessage(event, setFutures, setStocks)
         });
 
