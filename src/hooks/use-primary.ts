@@ -116,10 +116,13 @@ const handleWebSocketMessage = (event: MessageEvent<string>,
     const data = parsePrimaryData(primaryData);
     if (data) {
         const { ticker, values, variableType, variableName, tickerType } = data;
+        if (ticker === 'tc-mayorista') {
+            return;
+        }
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
         const lastPrice = values.find((val) => val.key === "lastPrice");
         if (variableType !== 'L2') {
-            switch (variableType) {
+            switch (tickerType) {
                 case "FUTURE":
                     updateFutures({ ticker, values: { tradeVolume, lastPrice } }, setFutures);
                     break;
@@ -197,11 +200,13 @@ export const usePrimary = () => {
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
+        // const socket = new WebSocket(
+        //     "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
+        // );
         const socket = new WebSocket(
-            "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
+            "ws://localhost:3500",
         );
         setSocket(socket);
-
         socket.addEventListener("message", (event: MessageEvent<string>) => {
             handleWebSocketMessage(event, setFutures, setStocks, setBonds)
         });
