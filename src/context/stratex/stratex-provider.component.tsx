@@ -9,9 +9,9 @@ interface StratexProviderProps {
 }
 
 const StratexProvider: React.FC<StratexProviderProps> = (props) => {
-  const { futures, stocks } = usePrimary();
+  const { futures, stocks, bonds } = usePrimary();
   return (
-    <StratexContext.Provider value={{ futures, stocks }}>
+    <StratexContext.Provider value={{ futures, stocks, bonds }}>
       {props.children}
     </StratexContext.Provider>
   );

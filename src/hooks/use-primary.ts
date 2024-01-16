@@ -19,6 +19,10 @@ export type StockDto = {
     dollarMEP?: number;
 } & TickerDto;
 
+export type BondDto = {
+    //
+} & TickerDto;
+
 type L1Keys =
     | "ticker"
     | "tickerType"
@@ -99,8 +103,15 @@ const updateFutures = (input: UpdateTickerInput, setFutures: React.Dispatch<Reac
 const updateStocks = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
     updateTickerValues(input, setStocks)
 };
+const updateBonds = (input: UpdateTickerInput, setBonds: React.Dispatch<React.SetStateAction<Record<string, BondDto>>>) => {
+    updateTickerValues(input, setBonds)
+};
 
-const handleWebSocketMessage = (event: MessageEvent<string>, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>) => {
+const handleWebSocketMessage = (event: MessageEvent<string>,
+    setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>,
+    setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>,
+    setBonds: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>
+) => {
     const primaryData = event.data;
     const data = parsePrimaryData(primaryData);
     if (data) {
@@ -115,6 +126,9 @@ const handleWebSocketMessage = (event: MessageEvent<string>, setFutures: React.D
                 case "STOCK":
                     updateStocks({ ticker, values: { tradeVolume, lastPrice } }, setStocks);
                     break;
+                case "BOND":
+                    updateBonds({ ticker, values: { tradeVolume, lastPrice } }, setBonds);
+                    break;
             }
         } else {
             switch (variableName) {
@@ -124,7 +138,7 @@ const handleWebSocketMessage = (event: MessageEvent<string>, setFutures: React.D
                     break;
                 case "PRICE-CHANGE":
                     const variation = values.find((val) => val.key === "Price_change");
-                    updatePriceChange({ ticker, tickerType, values: { variation } }, setStocks, setFutures);
+                    updatePriceChange({ ticker, tickerType, values: { variation } }, setStocks, setFutures, setBonds);
                     break;
                 case "DOLLAR-MEP":
                     const dollarMEP = values.find((val) => val.key === "Dollar_mep");
@@ -150,7 +164,11 @@ const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<
     }));
 };
 
-const updatePriceChange = (input: UpdateTickerInput, setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
+const updatePriceChange = (input: UpdateTickerInput,
+    setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>,
+    setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>,
+    setBonds: React.Dispatch<React.SetStateAction<Record<string, BondDto>>>
+) => {
     const { ticker, values, tickerType } = input;
     const { variation } = values;
     switch (tickerType) {
@@ -159,6 +177,9 @@ const updatePriceChange = (input: UpdateTickerInput, setStocks: React.Dispatch<R
             break;
         case "FUTURE":
             updateTickerValues({ ticker, values: { variation } }, setFutures);
+            break;
+        case "BOND":
+            updateTickerValues({ ticker, values: { variation } }, setBonds);
             break;
     }
 };
@@ -172,6 +193,7 @@ const updateDolarMEP = (input: UpdateTickerInput, setStocks: React.Dispatch<Reac
 export const usePrimary = () => {
     const [futures, setFutures] = useState<Record<string, FutureDto>>({});
     const [stocks, setStocks] = useState<Record<string, StockDto>>({});
+    const [bonds, setBonds] = useState<Record<string, BondDto>>({});
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
@@ -179,8 +201,9 @@ export const usePrimary = () => {
             "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
         );
         setSocket(socket);
+
         socket.addEventListener("message", (event: MessageEvent<string>) => {
-            handleWebSocketMessage(event, setFutures, setStocks)
+            handleWebSocketMessage(event, setFutures, setStocks, setBonds)
         });
 
         socket.addEventListener("error", (event) => {
@@ -202,5 +225,5 @@ export const usePrimary = () => {
         };
     }, [socket]);
 
-    return { stocks: Object.values(stocks), futures: Object.values(futures) };
+    return { stocks: Object.values(stocks), futures: Object.values(futures), bonds: Object.values(bonds) };
 };
