@@ -2,25 +2,25 @@
 
 import { useEffect, useState } from "react";
 
-export type TickerDto = {
-    ticker?: string;
-    tradeVolume?: number;
-    lastPrice?: number;
+type TickerDto = {
+    [Key in L1Keys]?: Key extends "ticker" ? string : number;
+} & {
     variation?: number;
-};
+}
 
 export type FutureDto = {
     impliedInterestRate?: number;
     nominalInterestRate?: number;
     effectiveInterestRate?: number;
 } & TickerDto;
-
 export type StockDto = {
     dollarMEP?: number;
 } & TickerDto;
-
 export type BondDto = {
     //
+} & TickerDto;
+export type DollarDto = {
+    offerPrice: number;
 } & TickerDto;
 
 type L1Keys =
@@ -110,17 +110,28 @@ const updateBonds = (input: UpdateTickerInput, setBonds: React.Dispatch<React.Se
 const handleWebSocketMessage = (event: MessageEvent<string>,
     setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>,
     setStocks: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>,
-    setBonds: React.Dispatch<React.SetStateAction<Record<string, StockDto>>>
+    setBonds: React.Dispatch<React.SetStateAction<Record<string, BondDto>>>,
+    setDollars: React.Dispatch<React.SetStateAction<Record<string, DollarDto>>>,
 ) => {
     const primaryData = event.data;
     const data = parsePrimaryData(primaryData);
     if (data) {
         const { ticker, values, variableType, variableName, tickerType } = data;
-        if (ticker === 'tc-mayorista') {
-            return;
-        }
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
         const lastPrice = values.find((val) => val.key === "lastPrice");
+        if (ticker === 'tc-mayorista') {
+            console.log('Dollar!', data);
+            const offerPrice = values.find((val) => val.key === 'offerPrice');
+            setDollars((prev) => ({
+                ...prev,
+                [ticker]: {
+                    ...prev[ticker],
+                    ticker,
+                    offerPrice: Number(offerPrice?.value) ?? prev[ticker]?.offerPrice,
+                },
+            }));
+            return;
+        }
         if (variableType !== 'L2') {
             switch (tickerType) {
                 case "FUTURE":
@@ -197,18 +208,19 @@ export const usePrimary = () => {
     const [futures, setFutures] = useState<Record<string, FutureDto>>({});
     const [stocks, setStocks] = useState<Record<string, StockDto>>({});
     const [bonds, setBonds] = useState<Record<string, BondDto>>({});
+    const [dollars, setDollars] = useState<Record<string, DollarDto>>({});
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
-        const socket = new WebSocket(
-            "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
-        );
         // const socket = new WebSocket(
-        //     "ws://localhost:3500",
+        //     "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
         // );
+        const socket = new WebSocket(
+            "ws://localhost:3500",
+        );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
-            handleWebSocketMessage(event, setFutures, setStocks, setBonds)
+            handleWebSocketMessage(event, setFutures, setStocks, setBonds, setDollars)
         });
 
         socket.addEventListener("error", (event) => {
@@ -230,5 +242,5 @@ export const usePrimary = () => {
         };
     }, [socket]);
 
-    return { stocks: Object.values(stocks), futures: Object.values(futures), bonds: Object.values(bonds) };
+    return { stocks: Object.values(stocks), futures: Object.values(futures), bonds: Object.values(bonds), dollars: Object.values(dollars) };
 };

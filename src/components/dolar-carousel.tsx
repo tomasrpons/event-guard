@@ -2,40 +2,30 @@
 import React from "react";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import DolarCard from "~/components/dolar-card";
+import { useStratexContext } from "~/hooks/stratex-hooks";
 
 type DolarCarouselProps = {
   filterValue?: string;
 };
 
 const DolarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
-  const dolarCards = [
-    {
-      title: "Dólar Oficial",
-      variation: 4.95,
-      buyPrice: 827.75,
-      sellPrice: 787.75,
-    },
-    { title: "Dólar Blue", variation: 1.32, buyPrice: 995.0, sellPrice: 945.0 },
-    { title: "Dólar CCL", variation: 2.26, sellPrice: 903.16 },
-    { title: "Dólar MEP", variation: 0.42, sellPrice: 927.75 },
-  ];
-
+  const { dollars } = useStratexContext();
   // Filter DolarCards based on the filterValue
   const filteredDolarCards = filterValue
-    ? dolarCards.filter((card) =>
-        card.title.toLowerCase().includes(filterValue.toLowerCase()),
+    ? dollars.filter((card) =>
+        card.ticker?.toLowerCase().includes(filterValue.toLowerCase()),
       )
-    : dolarCards;
+    : dollars;
   return (
     <ScrollArea className="w-full whitespace-nowrap ">
       <div className="flex w-full justify-center space-x-12 p-4">
         {filteredDolarCards.map((dolarCard) => (
           <DolarCard
-            key={dolarCard.title}
-            title={dolarCard.title}
+            key={dolarCard.ticker}
+            title={dolarCard.ticker}
             variation={dolarCard.variation}
-            buyPrice={dolarCard.buyPrice}
-            sellPrice={dolarCard.sellPrice}
+            buyPrice={dolarCard.bidPrice}
+            sellPrice={dolarCard.offerPrice}
           />
         ))}
       </div>
