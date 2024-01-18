@@ -24,12 +24,12 @@ const DolarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sellP
         <div className="flex gap-4">
           {buyPrice ? (
             <div className="flex flex-col">
-              <p className="font-semibold">{buyPrice}</p>
+              <p className="font-semibold">${buyPrice}</p>
               <p>Compra</p>
             </div>
           ) : null}
           <div className="flex flex-col">
-            <p className="font-semibold">{sellPrice}</p>
+            <p className="font-semibold">${sellPrice}</p>
             <p>Venta</p>
           </div>
         </div>
