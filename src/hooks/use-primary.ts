@@ -120,7 +120,6 @@ const handleWebSocketMessage = (event: MessageEvent<string>,
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
         const lastPrice = values.find((val) => val.key === "lastPrice");
         if (ticker === 'tc-mayorista') {
-            console.log('Dollar!', data);
             const offerPrice = values.find((val) => val.key === 'offerPrice');
             setDollars((prev) => ({
                 ...prev,
