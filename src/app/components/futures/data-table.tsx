@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
     <div className="mb-12 space-y-4">
       <DataTableToolbar table={table} />
       <ScrollArea className="h-[400px] overflow-auto rounded-md border">
-        <Table>
+        <Table className="min-w-40">
           <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow

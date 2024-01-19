@@ -38,11 +38,11 @@ type L1Keys =
     | "closingPrice"
     | "tradeVolume";
 type L2Keys =
-    | "Price_change"
-    | "Implied_interest_rate"
+    | "priceChange"
+    | "impliedInterestRate"
     | "Nominal_interest_rate"
     | "Effective_interest_rate"
-    | "Dollar_mep";
+    | "dollarMep";
 type ValueKeys = L2Keys | L1Keys;
 type TickerType = "STOCK" | "BOND" | "FUTURE" | "CEDEAR";
 
@@ -79,19 +79,28 @@ const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
     }
 };
 
+const isNumber = (value: unknown): boolean => {
+    return typeof value === 'number' && !isNaN(value);
+}
+
 const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.Dispatch<React.SetStateAction<Record<string, TickerDto | FutureDto | StockDto>>>) => {
     const { ticker, values, tickerType } = inputData;
     const { tradeVolume, lastPrice, variation, impliedInterestRate, dollarMEP } = values;
+    const castedTradeVolume = isNumber(tradeVolume?.value) ? Number(tradeVolume?.value) : 0;
+    const castedLastPrice = isNumber(lastPrice?.value) ? Number(lastPrice?.value) : 0;
+    const castedImpliedInterestRate = isNumber(impliedInterestRate?.value) ? Number(impliedInterestRate?.value) : 0;
+    const castedVariation = isNumber(variation?.value) ? Number(variation?.value) : 0;
+    const castedDollarMEP = isNumber(dollarMEP?.value) ? Number(dollarMEP?.value) : 0;
     setTickerData((prev) => ({
         ...prev,
         [ticker]: {
             ...prev[ticker],
             ticker,
-            tradeVolume: Number(tradeVolume?.value) ?? prev[ticker]?.tradeVolume,
-            lastPrice: Number(lastPrice?.value) ?? prev[ticker]?.lastPrice,
-            impliedInterestRate: (tickerType === "FUTURE") ? Number(impliedInterestRate?.value) ?? (prev[ticker] as FutureDto)?.impliedInterestRate : undefined,
-            variation: Number(variation?.value) ?? prev[ticker]?.variation,
-            dollarMEP: (tickerType === "STOCK") ? Number(dollarMEP?.value) ?? (prev[ticker] as StockDto)?.dollarMEP : undefined,
+            tradeVolume: castedTradeVolume === 0 && isNumber(prev[ticker]?.tradeVolume) ? prev[ticker]?.tradeVolume : castedTradeVolume,
+            lastPrice: castedLastPrice === 0 && isNumber(prev[ticker]?.lastPrice) ? prev[ticker]?.lastPrice : castedLastPrice,
+            impliedInterestRate: castedImpliedInterestRate === 0 && isNumber((prev[ticker] as FutureDto)?.impliedInterestRate) ? (prev[ticker] as FutureDto)?.impliedInterestRate : castedImpliedInterestRate,
+            variation: castedVariation === 0 && isNumber(prev[ticker]?.variation) ? prev[ticker]?.variation : castedVariation,
+            dollarMEP: castedDollarMEP,
         },
     }));
 };
@@ -146,15 +155,15 @@ const handleWebSocketMessage = (event: MessageEvent<string>,
         } else {
             switch (variableName) {
                 case "FUTURE-RATES":
-                    const impliedInterestRate = values.find((val) => val.key === "Implied_interest_rate");
+                    const impliedInterestRate = values.find((val) => val.key === "impliedInterestRate");
                     updateFutureRates({ ticker, values: { impliedInterestRate } }, setFutures);
                     break;
                 case "PRICE-CHANGE":
-                    const variation = values.find((val) => val.key === "Price_change");
+                    const variation = values.find((val) => val.key === "priceChange");
                     updatePriceChange({ ticker, tickerType, values: { variation } }, setStocks, setFutures, setBonds);
                     break;
                 case "DOLLAR-MEP":
-                    const dollarMEP = values.find((val) => val.key === "Dollar_mep");
+                    const dollarMEP = values.find((val) => val.key === "dollarMep");
                     updateDolarMEP({ ticker, values: { dollarMEP } }, setStocks);
                     break;
             }
@@ -211,12 +220,12 @@ export const usePrimary = () => {
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
-        const socket = new WebSocket(
-            "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
-        );
         // const socket = new WebSocket(
-        //     "ws://localhost:3500",
+        //     "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
         // );
+        const socket = new WebSocket(
+            "ws://localhost:3500",
+        );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
             handleWebSocketMessage(event, setFutures, setStocks, setBonds, setDollars)

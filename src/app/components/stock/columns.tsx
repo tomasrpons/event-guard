@@ -10,75 +10,64 @@ import { usePrevious } from "~/hooks/use-previous";
 export const columns: ColumnDef<StockDto>[] = [
   {
     accessorKey: "ticker",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ticker" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Ticker" />,
     cell: ({ row }) => <div>{row.getValue("ticker")}</div>,
     enableSorting: true,
   },
   {
     accessorKey: "lastPrice",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Último precio" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Último precio" />,
     cell: ({ row }) => {
       const lastPrice: number = row.getValue("lastPrice");
-      const previousLastPrice = !isNaN(usePrevious(lastPrice))
-        ? usePrevious(lastPrice)
-        : 0;
+      // const previousLastPrice = !isNaN(usePrevious(lastPrice))
+      //   ? usePrevious(lastPrice)
+      //   : 0;
       return (
         <span className="truncate font-medium">
-          <Counter from={previousLastPrice} to={lastPrice} />
+          {lastPrice}
+          {/* <Counter from={previousLastPrice} to={lastPrice} /> */}
         </span>
       );
     },
+    enableSorting: true,
   },
   {
     accessorKey: "variation",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Variación" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Variación" />,
     cell: ({ row }) => {
       const variation: number = row.getValue("variation");
-      const previousVariation = !isNaN(usePrevious(variation))
-        ? usePrevious(variation)
-        : 0;
+      // const previousVariation = !isNaN(usePrevious(variation))
+      //   ? usePrevious(variation)
+      //   : 0;
       return (
         <span className="truncate font-medium">
-          <div
-            className={cn(
-              "flex",
-              variation > 0
-                ? "text-green-600"
-                : variation < 0
-                  ? "text-red-600"
-                  : undefined,
-            )}
-          >
+          <div className={cn("flex", variation > 0 ? "text-green-600" : variation < 0 ? "text-red-600" : undefined)}>
             {variation > 0 ? "+" : undefined}
-            <Counter from={previousVariation} to={variation} />
+            {/* <Counter from={previousVariation} to={variation} /> */}
+            {!isNaN(variation) ? variation : 0}
             <span className="ml-1">%</span>
           </div>
         </span>
       );
     },
+    enableSorting: true,
   },
   {
     accessorKey: "tradeVolume",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Volumen" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Volumen" />,
     cell: ({ row }) => {
       const tradeVolume: number = row.getValue("tradeVolume");
-      const previousTradeVolume = !isNaN(usePrevious(tradeVolume))
-        ? usePrevious(tradeVolume)
-        : 0;
+      // const previousTradeVolume = !isNaN(usePrevious(tradeVolume))
+      //   ? usePrevious(tradeVolume)
+      //   : 0;
       return (
         <span className="truncate font-medium">
-          <Counter from={previousTradeVolume} to={tradeVolume} />
+          {tradeVolume}
+          {/* <Counter from={previousTradeVolume} to={tradeVolume} /> */}
         </span>
       );
     },
+    enableSorting: true,
   },
   // {
   //   accessorKey: "dollarMEP",
