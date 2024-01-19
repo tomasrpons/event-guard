@@ -84,7 +84,7 @@ const isNumber = (value: unknown): boolean => {
 }
 
 const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.Dispatch<React.SetStateAction<Record<string, TickerDto | FutureDto | StockDto>>>) => {
-    const { ticker, values, tickerType } = inputData;
+    const { ticker, values } = inputData;
     const { tradeVolume, lastPrice, variation, impliedInterestRate, dollarMEP } = values;
     const castedTradeVolume = isNumber(tradeVolume?.value) ? Number(tradeVolume?.value) : 0;
     const castedLastPrice = isNumber(lastPrice?.value) ? Number(lastPrice?.value) : 0;
@@ -220,12 +220,12 @@ export const usePrimary = () => {
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
-        // const socket = new WebSocket(
-        //     "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
-        // );
         const socket = new WebSocket(
-            "ws://localhost:3500",
+            "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500",
         );
+        // const socket = new WebSocket(
+        //     "ws://localhost:3500",
+        // );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
             handleWebSocketMessage(event, setFutures, setStocks, setBonds, setDollars)
