@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import type { FutureDto } from "~/hooks/use-primary";
 import { cn } from "~/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 export const columns: ColumnDef<FutureDto>[] = [
   {
@@ -49,12 +50,25 @@ export const columns: ColumnDef<FutureDto>[] = [
   },
   {
     accessorKey: "impliedInterestRate",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Tasa Implícita" />,
+    header: ({ column }) => (
+      <>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <DataTableColumnHeader column={column} title="Tasa Implícita" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Calculo de la Tasa Implícita</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </>
+    ),
     cell: ({ row }) => {
       const impliedInterestRate: number = row.getValue("impliedInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(impliedInterestRate) ? impliedInterestRate * 100 : 0}
+          {!isNaN(impliedInterestRate) ? impliedInterestRate : 0}
           <span className="ml-1">%</span>
         </span>
       );

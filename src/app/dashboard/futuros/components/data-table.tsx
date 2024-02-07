@@ -72,7 +72,7 @@ export function DataTable<TData, TValue>({
           <TableHeader className="sticky top-0">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
-                key={headerGroup.id + "-header"}
+                key={headerGroup.id}
                 className="sticky top-0 bg-secondary hover:bg-secondary"
               >
                 {headerGroup.headers.map((header) => (
@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({
                   key={row.id + "-row"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id + "-cell"}>
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

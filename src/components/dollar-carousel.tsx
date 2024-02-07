@@ -1,14 +1,14 @@
 "use client";
 import React from "react";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import DolarCard from "~/components/dolar-card";
+import  DollarCard from "~/components/dollar-card";
 import { useStratexContext } from "~/hooks/stratex-hooks";
 
 type DolarCarouselProps = {
   filterValue?: string;
 };
 
-const DolarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
+const DollarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
   const { dollars } = useStratexContext();
   // Filter DolarCards based on the filterValue
   const filteredDolarCards = filterValue
@@ -20,8 +20,9 @@ const DolarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
     <ScrollArea className="w-full whitespace-nowrap ">
       <div className="flex w-full justify-center space-x-12 p-4">
         {filteredDolarCards.map((dolarCard) => (
-          <DolarCard
+          <DollarCard
             key={dolarCard.ticker}
+            operationDate={dolarCard.operationDate}
             title={dolarCard.ticker}
             variation={dolarCard.variation}
             buyPrice={dolarCard.bidPrice}
@@ -34,4 +35,4 @@ const DolarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
   );
 };
 
-export default DolarCarousel;
+export default DollarCarousel;
