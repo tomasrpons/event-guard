@@ -22,7 +22,7 @@ const DollarCarousel: React.FC<DolarCarouselProps> = ({ filterValue }) => {
           <DollarCard
             key={dolarCard.ticker}
             operationDate={dolarCard.operationDate}
-            title={castDollarName(dolarCard.ticker as string)}
+            title={castDollarName(dolarCard.ticker ?? "")}
             variation={dolarCard.variation}
             buyPrice={dolarCard.bidPrice}
             sellPrice={dolarCard.offerPrice}
