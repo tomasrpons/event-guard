@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <DollarCarousel />
       <nav className="flex items-center gap-6 text-lg">
         <Link
-          href="/dashboard/futuros"
+          href="/dashboard/futuros/acciones"
           className={cn(
             "transition-colors hover:text-foreground/80",
             pathname.includes("/dashboard/futuros") ? "text-foreground" : "text-foreground/60"

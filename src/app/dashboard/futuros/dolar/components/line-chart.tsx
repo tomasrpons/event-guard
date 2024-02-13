@@ -7,16 +7,18 @@ import {
   Title,
   Tooltip,
   Legend,
+  type ChartOptions,
+  type ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const options = {
+const options: ChartOptions<"line"> = {
   responsive: true,
   scales: {
     y: {
       ticks: {
-        callback: function (value: string | number) {
+        callback: function (value) {
           return value + "%";
         },
       },
@@ -31,7 +33,7 @@ const options = {
 
 const labels = ["50", "100", "150", "200", "250", "300", "350"];
 
-const data = {
+const data: ChartData<"line"> = {
   labels,
   datasets: [
     {
@@ -42,7 +44,7 @@ const data = {
     },
     {
       label: "Implícita (TNA) Matba Rofex",
-      data: [0, 60, 70, 91, 75, 46],
+      data: [0, 60, 70, 102, 75, 46],
       borderColor: "rgb(77 124 15)",
       backgroundColor: "rgb(77 124 15)",
     },
@@ -50,5 +52,9 @@ const data = {
 };
 
 export default function LineChart() {
-  return <Line options={options} data={data} />;
+  return (
+    <div>
+      <Line options={options} data={data} />
+    </div>
+  );
 }

@@ -58,8 +58,8 @@ type ValueTypes = {
     tradeVolume: number;
     priceChange: number;
     impliedInterestRate: number;
-    Nominal_interest_rate: number;
-    Effective_interest_rate: number;
+    nominalInterestRate: number;
+    effectiveInterestRate: number;
     dollarMep: number;
     variation: number;
 };
@@ -69,7 +69,7 @@ export type TickerValues = {
     value: ValueTypes[ValueKeys];
 };
 
-export type VariableType = "FUTURE" | "STOCK" | "L2" | "BOND";
+export type VariableType = "FUTURE" | "STOCK" | "L1" | "L2" | "BOND";
 export type VariableName =
     | "Ticker"
     | "FUTURE-RATES"
@@ -87,7 +87,15 @@ export type EventGuardTickerDto = {
 type UpdateTickerInput = {
     ticker: string;
     tickerType?: TickerType;
-    values: { tradeVolume?: TickerValues; lastPrice?: TickerValues, impliedInterestRate?: TickerValues, variation?: TickerValues, dollarMEP?: TickerValues }
+    values: {
+        tradeVolume?: TickerValues;
+        lastPrice?: TickerValues,
+        impliedInterestRate?: TickerValues,
+        nominalInterestRate?: TickerValues,
+        effectiveInterestRate?: TickerValues,
+        variation?: TickerValues,
+        dollarMEP?: TickerValues
+    }
 }
 const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
     try {
@@ -163,7 +171,7 @@ const handleWebSocketMessage = (
             }));
             return;
         }
-        if (variableType !== 'L2') {
+        if (variableType === 'L1') {
             switch (tickerType) {
                 case "FUTURE":
                     updateFutures({ ticker, values: { tradeVolume, lastPrice } }, setFutures);
@@ -175,11 +183,13 @@ const handleWebSocketMessage = (
                     updateBonds({ ticker, values: { tradeVolume, lastPrice } }, setBonds);
                     break;
             }
-        } else {
+        } else if (variableType === "L2") {
             switch (variableName) {
                 case "FUTURE-RATES":
                     const impliedInterestRate = values.find((val) => val.key === "impliedInterestRate");
-                    updateFutureRates({ ticker, values: { impliedInterestRate } }, setFutures);
+                    const nominalInterestRate = values.find((val) => val.key === "nominalInterestRate");
+                    const effectiveInterestRate = values.find((val) => val.key === "effectiveInterestRate");
+                    updateFutureRates({ ticker, values: { impliedInterestRate, nominalInterestRate, effectiveInterestRate } }, setFutures);
                     break;
                 case "PRICE-CHANGE":
                     const variation = values.find((val) => val.key === "priceChange");
@@ -196,7 +206,7 @@ const handleWebSocketMessage = (
 
 const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
     const { values, ticker } = input;
-    const { impliedInterestRate } = values;
+    const { impliedInterestRate, nominalInterestRate, effectiveInterestRate } = values;
     setFutures((prev) => ({
         ...prev,
         [ticker]: {
@@ -205,6 +215,10 @@ const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<
             impliedInterestRate:
                 +(Number(impliedInterestRate?.value) * 100).toFixed(2) ??
                 prev[ticker]?.impliedInterestRate,
+            nominalInterestRate: +(Number(nominalInterestRate?.value) * 100).toFixed(2) ??
+                prev[ticker]?.nominalInterestRate,
+            effectiveInterestRate: +(Number(effectiveInterestRate?.value) * 100).toFixed(2) ??
+                prev[ticker]?.effectiveInterestRate,
         },
     }));
 };

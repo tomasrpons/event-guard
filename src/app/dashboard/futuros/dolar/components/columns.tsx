@@ -3,8 +3,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import type { FutureDto } from "~/hooks/use-primary";
-import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
 import ToggleChartButton from "./toggle-chart-button";
 
 export const columns: ColumnDef<FutureDto>[] = [

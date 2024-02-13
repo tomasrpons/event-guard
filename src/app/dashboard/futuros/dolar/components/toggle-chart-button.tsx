@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "~/components/ui/button";
 import LineChart from "./line-chart";
 import {
@@ -15,11 +17,11 @@ export default function ToggleChartButton() {
       <DialogTrigger asChild>
         <Button variant="outline">Ver curva</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex justify-between">
             <h2>Tasas implícitas (TNA Y TEA)</h2>
-            <span className="text-sm mr-2">
+            <span className="text-sm mr-4">
               {new Date().toLocaleDateString("es-AR", {
                 day: "2-digit",
                 month: "2-digit",

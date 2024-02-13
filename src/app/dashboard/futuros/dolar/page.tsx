@@ -8,15 +8,18 @@ import { columns as CurvesColumns } from "./components/columns";
 
 export default function Dolar() {
   const { futures } = useStratexContext();
+  const dollars = futures.filter((future) => future.ticker?.includes('DLR'))
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <h2 className="mb-2 text-3xl font-bold">Resumen</h2>
-        <FuturesDataTable data={futures} columns={FuturesColumns} />
-      </div>
-      <div>
-        <h2 className="mb-2 text-3xl font-bold">Curvas</h2>
-        <CurvesDataTable data={futures} columns={CurvesColumns} />
+    <div className="container">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h2 className="mb-2 text-3xl font-bold">Resumen</h2>
+          <FuturesDataTable data={dollars} columns={FuturesColumns} />
+        </div>
+        <div>
+          <h2 className="mb-2 text-3xl font-bold">Curvas</h2>
+          <CurvesDataTable data={dollars} columns={CurvesColumns} />
+        </div>
       </div>
     </div>
   );

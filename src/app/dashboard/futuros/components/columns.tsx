@@ -49,6 +49,59 @@ export const columns: ColumnDef<FutureDto>[] = [
     enableSorting: true,
   },
   {
+    accessorKey: "effectiveInterestRate",
+    header: ({ column }) => (
+      <>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <DataTableColumnHeader column={column} title="TEA" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Calculo de TEA</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </>
+    ),
+    cell: ({ row }) => {
+      const tea: number = row.getValue("effectiveInterestRate");
+      return (
+        <span className="truncate font-medium flex">
+          {!isNaN(tea) ? tea : 0}
+        </span>
+      );
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "nominalInterestRate",
+    header: ({ column }) => (
+      <>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <DataTableColumnHeader column={column} title="TNA" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Calculo de TNA</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </>
+    ),
+    cell: ({ row }) => {
+      const tna: number = row.getValue("nominalInterestRate");
+      return (
+        <span className="truncate font-medium flex">
+          {!isNaN(tna) ? tna : 0}
+          <span className="ml-1">%</span>
+        </span>
+      );
+    },
+    enableSorting: true,
+  },
+  {
     accessorKey: "impliedInterestRate",
     header: ({ column }) => (
       <>

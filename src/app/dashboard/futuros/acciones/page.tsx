@@ -1,11 +1,12 @@
 "use client"
 
-import { columns } from "~/app/components/stock/columns";
-import { DataTable } from "~/app/components/stock/data-table";
 import { useStratexContext } from "~/hooks/stratex-hooks";
+import { columns } from "../components/columns";
+import { DataTable } from "../components/data-table";
 
 export default function Acciones() {
-  const { stocks } = useStratexContext();
+  const { futures } = useStratexContext();
+  const stocks = futures.filter((future) => !future.ticker?.includes('DLR'))
   return (
     <div className="flex flex-col">
       <h2 className="mb-2 text-3xl font-bold text-left">Resumen</h2>
