@@ -18,22 +18,20 @@ export default function Dolar() {
           <FuturesDataTable data={dollars} columns={FuturesColumns} />
         </div>
         <div>
-          <div className="">
-            <div className="flex justify-between">
-              <h2>Tasas implícitas (TNA Y TEA)</h2>
-              <span className="text-sm mr-4">
-                {new Date().toLocaleDateString("es-AR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </div>
-            <div>Una breve explicación???</div>
-          </div>
+          {/* <div className=""><div>Una breve explicación???</div></div> */}
           <LineChart />
+          <div className="flex justify-between">
+            {/* <h2>Tasas implícitas (TNA Y TEA)</h2> */}
+            <span className="text-sm mr-4">
+              {new Date().toLocaleDateString("es-AR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </div>
           {/* <h2 className="mb-2 text-3xl font-bold">Curvas</h2>
           <CurvesDataTable data={dollars} columns={CurvesColumns} /> */}
         </div>
