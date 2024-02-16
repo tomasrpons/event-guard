@@ -37,13 +37,13 @@ const data: ChartData<"line"> = {
   labels,
   datasets: [
     {
-      label: "Implícita (TEA) Matba Rofex",
+      label: "TEA",
       data: [0, 30, 50, 61, 42, 32],
       borderColor: "rgb(163 230 53)",
       backgroundColor: "rgb(163 230 53)",
     },
     {
-      label: "Implícita (TNA) Matba Rofex",
+      label: "TNA",
       data: [0, 60, 70, 102, 75, 46],
       borderColor: "rgb(77 124 15)",
       backgroundColor: "rgb(77 124 15)",
