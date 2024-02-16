@@ -31,8 +31,7 @@ const DollarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sell
           ) : null}
           <div className="flex flex-col">
             <p className="font-semibold">${sellPrice}</p>
-            <p>Venta</p>
-          </div>
+        </div>
         </div>
         <p className="text-xs">
           {operationDate

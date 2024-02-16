@@ -18,7 +18,12 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Último precio" />,
     cell: ({ row }) => {
       const lastPrice: number = row.getValue("lastPrice");
-      return <span className="truncate font-medium">{lastPrice}</span>;
+      return (
+        <>
+          <span className="mr-1">$</span>
+          <span className="truncate font-medium">{lastPrice.toLocaleString('es-ES')}</span>
+        </>
+      );
     },
     enableSorting: true,
   },
@@ -27,11 +32,12 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Variación" />,
     cell: ({ row }) => {
       const variation: number = row.getValue("variation");
+      const parsedValue = +Number((variation * 100).toFixed(2)).toLocaleString('es-ES');
       return (
         <span className="truncate font-medium">
           <div className={cn("flex", variation > 0 ? "text-green-600" : variation < 0 ? "text-red-600" : undefined)}>
-            {variation > 0 ? "+" : undefined}
-            {!isNaN(variation) ? (variation * 100).toFixed(2) : 0}
+            {parsedValue > 0 ? "+" : undefined}
+            {!isNaN(parsedValue) ? (parsedValue * 100).toFixed(2) : 0}
             <span className="ml-1">%</span>
           </div>
         </span>
@@ -69,6 +75,7 @@ export const columns: ColumnDef<FutureDto>[] = [
       return (
         <span className="truncate font-medium flex">
           {!isNaN(tea) ? tea : 0}
+          <span className="ml-1">%</span>
         </span>
       );
     },
