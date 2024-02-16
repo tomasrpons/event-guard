@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -32,31 +34,24 @@ const options: ChartOptions<"line"> = {
   },
 };
 
-const labels = ["50", "100", "150", "200", "250", "300", "350"];
-
-const data: ChartData<"line"> = {
-  labels,
-  datasets: [
-    {
-      label: "TEA",
-      data: [0, 30, 50, 61, 42, 32],
-      borderColor: "rgb(163 230 53)",
-      backgroundColor: "rgb(163 230 53)",
-    },
-    {
-      label: "TNA",
-      data: [0, 60, 70, 102, 75, 46],
-      borderColor: "rgb(77 124 15)",
-      backgroundColor: "rgb(77 124 15)",
-    },
-  ],
-};
-
 type LineChartProps = {
+  datasets: { data: number[]; label: string; backgroundColor: string; borderColor: string }[];
   title: string;
+  labels: string[];
 };
 
 const LineChart: React.FC<LineChartProps> = (props) => {
+  const data: ChartData<"line"> = {
+    labels: props.labels,
+    datasets: props.datasets.map(({ label, data, borderColor, backgroundColor }) => {
+      return {
+        label,
+        data,
+        borderColor,
+        backgroundColor,
+      };
+    }),
+  };
   return (
     <div>
       <h3>{props.title}</h3>

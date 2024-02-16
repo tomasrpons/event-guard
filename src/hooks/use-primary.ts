@@ -12,6 +12,7 @@ export type FutureDto = {
     impliedInterestRate?: number;
     nominalInterestRate?: number;
     effectiveInterestRate?: number;
+    forwardTem?: number;
 } & TickerDto;
 export type StockDto = {
     dollarMEP?: number;
@@ -53,6 +54,7 @@ type ValueTypes = {
     bidSize: number;
     offerPrice: number;
     offerSize: number;
+    forwardTem: number;
     openingPrice: number;
     closingPrice: number;
     tradeVolume: number;
@@ -76,7 +78,8 @@ export type VariableName =
     | "DOLLAR-MEP"
     | "CEDEAR-EXCHANGE-RATE"
     | "DOLLAR-CCL"
-    | "PRICE-CHANGE";
+    | "PRICE-CHANGE"
+    | "FORWARD-RATES";
 export type EventGuardTickerDto = {
     ticker: string;
     variableType: VariableType;
@@ -89,12 +92,13 @@ type UpdateTickerInput = {
     tickerType?: TickerType;
     values: {
         tradeVolume?: TickerValues;
-        lastPrice?: TickerValues,
-        impliedInterestRate?: TickerValues,
-        nominalInterestRate?: TickerValues,
-        effectiveInterestRate?: TickerValues,
-        variation?: TickerValues,
-        dollarMEP?: TickerValues
+        lastPrice?: TickerValues;
+        impliedInterestRate?: TickerValues;
+        nominalInterestRate?: TickerValues;
+        effectiveInterestRate?: TickerValues;
+        variation?: TickerValues;
+        dollarMEP?: TickerValues;
+        forwardTem?: TickerValues;
     }
 }
 const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
@@ -191,6 +195,10 @@ const handleWebSocketMessage = (
                     const effectiveInterestRate = values.find((val) => val.key === "effectiveInterestRate");
                     updateFutureRates({ ticker, values: { impliedInterestRate, nominalInterestRate, effectiveInterestRate } }, setFutures);
                     break;
+                case "FORWARD-RATES":
+                    const forwardTem = values.find((val) => val.key === "forwardTem");
+                    updateForwardRates({ ticker, values: { forwardTem } }, setFutures);
+                    break;
                 case "PRICE-CHANGE":
                     const variation = values.find((val) => val.key === "priceChange");
                     updatePriceChange({ ticker, tickerType, values: { variation } }, setStocks, setFutures, setBonds);
@@ -219,6 +227,21 @@ const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<
                 prev[ticker]?.nominalInterestRate,
             effectiveInterestRate: +(Number(effectiveInterestRate?.value) * 100).toFixed(2) ??
                 prev[ticker]?.effectiveInterestRate,
+        },
+    }));
+};
+
+const updateForwardRates = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
+    const { values, ticker } = input;
+    const { forwardTem } = values;
+    setFutures((prev) => ({
+        ...prev,
+        [ticker]: {
+            ...prev[ticker],
+            ticker,
+            forwardTem:
+                +(Number(forwardTem?.value) * 100).toFixed(2) ??
+                prev[ticker]?.forwardTem,
         },
     }));
 };
