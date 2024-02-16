@@ -50,7 +50,7 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Volumen" />,
     cell: ({ row }) => {
       const tradeVolume: number = row.getValue("tradeVolume");
-      return <span className="truncate font-medium">{tradeVolume}</span>;
+      return <span className="truncate font-medium">{+tradeVolume.toLocaleString('es-ES')}</span>;
     },
     enableSorting: true,
   },

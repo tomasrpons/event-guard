@@ -10,6 +10,7 @@ import {
   type ChartOptions,
   type ChartData,
 } from "chart.js";
+import React from "react";
 import { Line } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -51,10 +52,17 @@ const data: ChartData<"line"> = {
   ],
 };
 
-export default function LineChart() {
+type LineChartProps = {
+  title: string;
+};
+
+const LineChart: React.FC<LineChartProps> = (props) => {
   return (
     <div>
+      <h3>{props.title}</h3>
       <Line options={options} data={data} />
     </div>
   );
-}
+};
+
+export default LineChart;
