@@ -14,7 +14,6 @@ import {
   type ChartData,
 } from "chart.js";
 import React from "react";
-import "chartjs-plugin-datalabels";
 import { Line } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
