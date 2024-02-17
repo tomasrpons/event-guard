@@ -17,3 +17,12 @@ export function castDollarName(name: string) {
       return name;
   }
 }
+
+
+
+export function convertToDate(dateString: string) {
+  const year = +dateString.slice(0, 4);
+  const month = +dateString.slice(4, 6) - 1;
+  const day = +dateString.slice(6, 8);
+  return new Date(year, month, day);
+}

@@ -3,15 +3,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import type { FutureDto } from "~/hooks/use-primary";
-import { cn } from "~/lib/utils";
+import { cn, convertToDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-
-function convertToDate(dateString: string) {
-  const year = +dateString.slice(0, 4);
-  const month = +dateString.slice(4, 6) - 1;
-  const day = +dateString.slice(6, 8);
-  return new Date(year, month, day);
-}
 
 export const columns: ColumnDef<FutureDto>[] = [
   {
