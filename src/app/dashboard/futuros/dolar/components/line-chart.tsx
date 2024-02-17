@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -29,11 +28,6 @@ const options: ChartOptions<"line"> = {
     },
   },
   plugins: {
-    tooltip: {
-      callbacks: {
-        footer,
-      },
-    },
     legend: {
       position: "top" as const,
     },
@@ -68,12 +62,3 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 };
 
 export default LineChart;
-
-function footer(tooltipItems: any[]) {
-  const sum = 0;
-  console.log("tooltipItems", tooltipItems);
-  // tooltipItems.forEach(function (tooltipItem: any) {
-  //   sum += tooltipItem.parsed.y;
-  // });
-  return "Sum: " + sum;
-}

@@ -10,9 +10,6 @@ function convertToDate(dateString: string) {
   const year = +dateString.slice(0, 4);
   const month = +dateString.slice(4, 6) - 1;
   const day = +dateString.slice(6, 8);
-  console.log('dateString', dateString);
-  console.log('converted date', new Date(year, month, day));
-  console.log('--------------');
   return new Date(year, month, day);
 }
 
