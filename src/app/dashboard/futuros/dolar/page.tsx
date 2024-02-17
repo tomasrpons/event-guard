@@ -50,8 +50,8 @@ export default function Dolar() {
   const orderedTickers = orderByMonth(dollars);
 
   return (
-    <div className="container">
-      <div className="grid grid-cols-2 gap-4">
+    <>
+      <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4">
         <LineChart
           labels={orderedTickers.map((tick) => tick.ticker!)}
           datasets={[
@@ -80,9 +80,7 @@ export default function Dolar() {
           datasets={[
             {
               label: "TEM",
-              data: orderedTickers.map((dlr) =>
-                typeof dlr.forwardTem === "number" ? dlr.forwardTem : 0
-              ),
+              data: orderedTickers.map((dlr) => (typeof dlr.forwardTem === "number" ? dlr.forwardTem : 0)),
               borderColor: "rgb(163 230 53)",
               backgroundColor: "rgb(163 230 53)",
             },
@@ -93,6 +91,6 @@ export default function Dolar() {
         <h2 className="mb-2 text-3xl font-bold">Resumen</h2>
         <FuturesDataTable data={dollars} columns={FuturesColumns} />
       </div>
-    </div>
+    </>
   );
 }

@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Link
           href="/dashboard/futuros/acciones"
           className={cn(
-            "transition-colors hover:text-foreground/80",
+            "transition-colors hover:text-foreground/80 text-2xl font-semibold",
             pathname.includes("/dashboard/futuros") ? "text-foreground" : "text-foreground/60"
           )}>
           Futuros

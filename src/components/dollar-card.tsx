@@ -11,7 +11,7 @@ type DolarCardProps = {
 
 const DollarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sellPrice, operationDate }) => {
   return (
-    <div className="w-64 rounded border-2 border-black p-2">
+    <div className="w-64 rounded border-2 border-slate-400 p-2 shadow-md">
       <div className="mb-4 flex justify-between">
         <h2 className="text-xl font-bold text-blue-600">{title}</h2>
         {variation ? (
