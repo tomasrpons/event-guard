@@ -9,6 +9,10 @@ export function castDollarName(name: string) {
   switch (name) {
     case "tc-mayorista":
       return "Dolar Mayorista";
+    case "I.CCL":
+      return "CCL"
+    case "I.RFX20":
+      return "RFX20"
     default:
       return name;
   }

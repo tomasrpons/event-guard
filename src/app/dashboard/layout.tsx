@@ -20,14 +20,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           )}>
           Futuros
         </Link>
-        <Link
+        {/* <Link
           href="/dashboard/opciones"
           className={cn(
             "transition-colors hover:text-foreground/80",
             pathname?.startsWith("/docs/opciones") ? "text-foreground" : "text-foreground/60"
           )}>
           Opciones
-        </Link>
+        </Link> */}
       </nav>
       <div className="w-1/2">
         <Separator className="my-4" />

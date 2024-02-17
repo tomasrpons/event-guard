@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -13,6 +14,7 @@ import {
   type ChartData,
 } from "chart.js";
 import React from "react";
+import "chartjs-plugin-datalabels";
 import { Line } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -28,6 +30,11 @@ const options: ChartOptions<"line"> = {
     },
   },
   plugins: {
+    tooltip: {
+      callbacks: {
+        footer,
+      },
+    },
     legend: {
       position: "top" as const,
     },
@@ -35,7 +42,7 @@ const options: ChartOptions<"line"> = {
 };
 
 type LineChartProps = {
-  datasets: { data: number[]; label: string; backgroundColor: string; borderColor: string }[];
+  datasets?: { data: number[]; label: string; backgroundColor: string; borderColor: string }[];
   title: string;
   labels: string[];
 };
@@ -43,14 +50,15 @@ type LineChartProps = {
 const LineChart: React.FC<LineChartProps> = (props) => {
   const data: ChartData<"line"> = {
     labels: props.labels,
-    datasets: props.datasets.map(({ label, data, borderColor, backgroundColor }) => {
-      return {
-        label,
-        data,
-        borderColor,
-        backgroundColor,
-      };
-    }),
+    datasets:
+      props.datasets?.map(({ label, data, borderColor, backgroundColor }) => {
+        return {
+          label,
+          data,
+          borderColor,
+          backgroundColor,
+        };
+      }) ?? [],
   };
   return (
     <div>
@@ -61,3 +69,12 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 };
 
 export default LineChart;
+
+function footer(tooltipItems: any[]) {
+  const sum = 0;
+  console.log("tooltipItems", tooltipItems);
+  // tooltipItems.forEach(function (tooltipItem: any) {
+  //   sum += tooltipItem.parsed.y;
+  // });
+  return "Sum: " + sum;
+}

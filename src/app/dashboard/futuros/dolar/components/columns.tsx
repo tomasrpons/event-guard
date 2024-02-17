@@ -6,12 +6,35 @@ import type { FutureDto } from "~/hooks/use-primary";
 import { cn } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
+function convertToDate(dateString: string) {
+  const year = +dateString.slice(0, 4);
+  const month = +dateString.slice(4, 6) - 1;
+  const day = +dateString.slice(6, 8);
+  console.log('dateString', dateString);
+  console.log('converted date', new Date(year, month, day));
+  console.log('--------------');
+  return new Date(year, month, day);
+}
+
 export const columns: ColumnDef<FutureDto>[] = [
   {
     accessorKey: "ticker",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Ticker" />,
     cell: ({ row }) => <div>{row.getValue("ticker")}</div>,
     enableSorting: true,
+    sortingFn: (a, b) => {
+      if (a.original.forwardMaturity && b.original.forwardMaturity) {
+        const dateA = convertToDate(a.original.forwardMaturity);
+        const dateB = convertToDate(b.original.forwardMaturity);
+        if (dateA < dateB) {
+          return 1;
+        } else if (dateA > dateB) {
+          return -1;
+        } else {
+          return 0;
+        }
+      } else return 0;
+    },
   },
   {
     accessorKey: "lastPrice",
@@ -21,7 +44,7 @@ export const columns: ColumnDef<FutureDto>[] = [
       return (
         <>
           <span className="mr-1">$</span>
-          <span className="truncate font-medium">{lastPrice.toLocaleString('es-ES')}</span>
+          <span className="truncate font-medium">{lastPrice.toLocaleString("es-ES")}</span>
         </>
       );
     },
@@ -49,7 +72,7 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Volumen" />,
     cell: ({ row }) => {
       const tradeVolume: number = row.getValue("tradeVolume");
-      return <span className="truncate font-medium">{+tradeVolume.toLocaleString('es-ES')}</span>;
+      return <span className="truncate font-medium">{+tradeVolume.toLocaleString("es-ES")}</span>;
     },
     enableSorting: true,
   },

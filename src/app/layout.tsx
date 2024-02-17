@@ -30,10 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
-              <StratexProvider>
-             
-                {children}
-              </StratexProvider>
+              <StratexProvider>{children}</StratexProvider>
             </div>
             <TailwindIndicator />
           </ThemeProvider>
