@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import { type Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { GoogleTagManager } from "@next/third-parties/google";
@@ -14,10 +15,28 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Docta Capital",
+  applicationName: "Docta Capital",
+  authors: { url: "docta.capital", name: "Docta Capital" },
+  generator: "Next.js",
+  keywords: ["Mercado financiero", "tiempo real", "market data", "acciones", "futuros"],
   description: "Información del mercado en tiempo real",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    type: "website",
+    url: "https://docta.capital",
+    title: "Docta Capital",
+    description: "Información del mercado en tiempo real",
+    siteName: "Docta Capital",
+  },
+  twitter: {
+    card: "summary",
+    site: "@site",
+    creator: "@creator",
+    title: "Docta Capital",
+    description: "Información del mercado en tiempo real",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
