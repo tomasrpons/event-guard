@@ -208,9 +208,6 @@ const handleWebSocketMessage = (
             switch (tickerType) {
                 case "FUTURE":
                     updateFutures({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setFutures);
-                    if (ticker === 'DLR/FEB24') {
-                        console.log('ticker FEB24', data);
-                    }
                     break;
                 case "STOCK":
                     updateStocks({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setStocks);
@@ -329,10 +326,6 @@ export const usePrimary = () => {
     const [bonds, setBonds] = useState<Record<string, BondDto>>({});
     const [dollars, setDollars] = useState<Record<string, DollarDto>>({});
     const [socket, setSocket] = useState<WebSocket>();
-
-    useEffect(() => {
-        console.log('futures', futures);
-    }, [futures]);
 
     useEffect(() => {
         const socket = new WebSocket(

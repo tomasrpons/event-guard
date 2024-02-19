@@ -20,8 +20,6 @@ export default function Dolar() {
   const dollars = futures.filter((future) => future.forwardContractSegment === "DOLAR");
   const orderedTickers = orderByForwardMaturity(dollars);
 
-  console.log('orderedTickers', orderedTickers);
-
   return (
     <>
       <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4">
