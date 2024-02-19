@@ -328,7 +328,7 @@ export const usePrimary = () => {
 
     useEffect(() => {
         const socket = new WebSocket(
-            process.env.NODE_ENV === 'production' ? "ws://ec2-54-174-10-108.compute-1.amazonaws.com:3500" : "ws://localhost:3500",
+            process.env.NODE_ENV === 'production' ? "ws://ec2-54-208-218-254.compute-1.amazonaws.com:3500" : "ws://localhost:3500",
         );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
