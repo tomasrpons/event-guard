@@ -10,6 +10,8 @@ const SiteHeader: React.FC = () => {
   const date = new Date();
   const { isMarketClosed } = useStratexContext();
 
+  console.log("isMarketClosed", isMarketClosed);
+
   return (
     <div className="w-full bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex w-full flex-col items-center justify-center xl:flex-row">

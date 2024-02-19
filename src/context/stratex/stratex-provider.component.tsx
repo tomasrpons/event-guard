@@ -10,10 +10,10 @@ interface StratexProviderProps {
 const StratexProvider: React.FC<StratexProviderProps> = (props) => {
   const { futures, stocks, bonds, dollars } = usePrimary();
   const isMarketClosed = () => {
-    const currentDateTime = new Date().toLocaleString("es-AR");
-    const currentTime = new Date(currentDateTime);
-    const currentDay = currentTime.getDay();
-    const currentHour = currentTime.getHours();
+    const currentDateTime = new Date().toLocaleString("en-US", { timeZone: "America/Argentina/Cordoba" });
+    const currentDay = new Date(currentDateTime).getDay();
+    const currentHour = new Date(currentDateTime).getHours();
+
     if (currentDay >= 1 && currentDay <= 5 && currentHour >= 11 && currentHour < 17) {
       return false;
     } else {

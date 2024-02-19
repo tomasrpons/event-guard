@@ -47,11 +47,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GoogleTagManager gtmId="GTM-T8264BZP" />
         <TRPCReactProvider cookies={cookies().toString()}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              <StratexProvider>{children}</StratexProvider>
-            </div>
-            <TailwindIndicator />
+            <StratexProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <SiteHeader />
+                {children}
+              </div>
+              <TailwindIndicator />
+            </StratexProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
