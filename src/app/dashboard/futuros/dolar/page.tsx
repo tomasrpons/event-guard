@@ -20,6 +20,8 @@ export default function Dolar() {
   const dollars = futures.filter((future) => future.forwardContractSegment === "DOLAR");
   const orderedTickers = orderByForwardMaturity(dollars);
 
+  console.log('orderedTickers', orderedTickers);
+
   return (
     <>
       <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -41,6 +43,14 @@ export default function Dolar() {
               ),
               borderColor: "rgb(22 163 74)",
               backgroundColor: "rgb(22 163 74)",
+            },
+            {
+              label: "Tasa Implícita",
+              data: orderedTickers.map((dlr) =>
+                typeof dlr.impliedInterestRate === "number" ? dlr.impliedInterestRate : 0
+              ),
+              borderColor: "rgb(77 124 15)",
+              backgroundColor: "rgb(77 124 15)",
             },
           ]}
           title="Curva normal"
