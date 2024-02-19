@@ -41,6 +41,20 @@ export const columns: ColumnDef<FutureDto>[] = [
     enableSorting: true,
   },
   {
+    accessorKey: "closingPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Precio de cierre" />,
+    cell: ({ row }) => {
+      const closingPrice: number = row.getValue("closingPrice");
+      return (
+        <>
+          <span className="mr-1">$</span>
+          <span className="truncate font-medium">{closingPrice.toLocaleString("es-ES")}</span>
+        </>
+      );
+    },
+    enableSorting: true,
+  },
+  {
     accessorKey: "variation",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Variación" />,
     cell: ({ row }) => {

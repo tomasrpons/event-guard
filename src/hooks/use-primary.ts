@@ -62,9 +62,6 @@ type ForwardContractSegment = "STOCK"
     | "TRIGO-MINI"
     | "NOT-FORWARD";
 
-
-type ValueKeys = keyof ValueTypes;
-
 type ValueTypes = {
     ticker: string;
     tickerType: string;
@@ -89,6 +86,8 @@ type ValueTypes = {
     dollarMep: number;
     variation: number;
 };
+
+type ValueKeys = keyof ValueTypes;
 
 export type TickerValues = {
     key: ValueKeys;
@@ -125,6 +124,7 @@ type UpdateTickerInput = {
         forwardMaturity?: TickerValues;
         dollarMEP?: TickerValues;
         forwardTem?: TickerValues;
+        closingPrice?: TickerValues;
         forwardContractSegment?: TickerValues;
     }
 }
@@ -143,13 +143,14 @@ const isNumber = (value: unknown): boolean => {
 
 const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.Dispatch<React.SetStateAction<Record<string, TickerDto | FutureDto | StockDto>>>) => {
     const { ticker, values } = inputData;
-    const { tradeVolume, lastPrice, variation, impliedInterestRate, dollarMEP, forwardContractSegment } = values;
+    const { tradeVolume, lastPrice, variation, closingPrice, impliedInterestRate, dollarMEP, forwardContractSegment } = values;
     const castedTradeVolume = isNumber(tradeVolume?.value) ? Number(tradeVolume?.value) : 0;
     const castedLastPrice = isNumber(lastPrice?.value) ? Number(lastPrice?.value) : 0;
     const castedImpliedInterestRate = isNumber(impliedInterestRate?.value) ? +Number(impliedInterestRate?.value).toFixed(2) : 0;
     const castedVariation = isNumber(variation?.value) ? Number(variation?.value) : 0;
     const castedDollarMEP = isNumber(dollarMEP?.value) ? Number(dollarMEP?.value) : 0;
     const castedForwardConstractSegment = typeof forwardContractSegment?.value === 'string' ? forwardContractSegment?.value : null; 
+    const castedClosingPrice = isNumber(closingPrice?.value) ? Number(closingPrice?.value) : 0 
     setTickerData((prev) => ({
         ...prev,
         [ticker]: {
@@ -160,6 +161,7 @@ const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.D
             impliedInterestRate: castedImpliedInterestRate === 0 && isNumber((prev[ticker] as FutureDto)?.impliedInterestRate) ? (prev[ticker] as FutureDto)?.impliedInterestRate : castedImpliedInterestRate,
             variation: castedVariation === 0 && isNumber(prev[ticker]?.variation) ? prev[ticker]?.variation : castedVariation,
             dollarMEP: castedDollarMEP,
+            closingPrice: castedClosingPrice === 0 && isNumber(prev[ticker]?.closingPrice) ? prev[ticker]?.closingPrice : castedClosingPrice,
             forwardContractSegment: castedForwardConstractSegment ?? (prev[ticker] as FutureDto)?.forwardContractSegment,
         },
     }));
@@ -189,6 +191,7 @@ const handleWebSocketMessage = (
         const { ticker, values, variableType, variableName, tickerType } = data;
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
         const lastPrice = values.find((val) => val.key === "lastPrice");
+        const closingPrice = values.find((val) => val.key === "closingPrice");
         const forwardContractSegment = values.find((val) => val.key === "forwardContractSegment");
         if (ticker === 'tc-mayorista' || ticker === 'I.CCL' || ticker === 'I.RFX20') {
             const offerPrice = values.find((val) => val.key === 'offerPrice');
@@ -207,10 +210,10 @@ const handleWebSocketMessage = (
         if (variableType === 'L1') {
             switch (tickerType) {
                 case "FUTURE":
-                    updateFutures({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setFutures);
+                    updateFutures({ ticker, values: { tradeVolume, lastPrice, closingPrice, forwardContractSegment } }, setFutures);
                     break;
                 case "STOCK":
-                    updateStocks({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setStocks);
+                    updateStocks({ ticker, values: { tradeVolume, lastPrice, closingPrice, forwardContractSegment } }, setStocks);
                     break;
                 case "BOND":
                     updateBonds({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setBonds);

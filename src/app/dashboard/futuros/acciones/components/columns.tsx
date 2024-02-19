@@ -12,6 +12,22 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Ticker" />,
     cell: ({ row }) => <div>{row.getValue("ticker")}</div>,
     enableSorting: true,
+    sortingFn: (a, b) => {
+      if (a.original?.ticker && b.original?.ticker) {
+        const [speciesA, monthA] = a.original.ticker?.split("/") as [string, string];
+        const [speciesB, monthB] = b.original.ticker?.split("/") as [string, string];
+
+        if (speciesA < speciesB) return 1;
+        if (speciesA > speciesB) return -1;
+
+        // If species names are same, compare months
+        const monthOrder = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+        const indexA = monthOrder.indexOf(monthA.slice(0, 3));
+        const indexB = monthOrder.indexOf(monthB.slice(0, 3));
+
+        return indexB - indexA;
+      } else return 0;
+    },
   },
   {
     accessorKey: "lastPrice",
@@ -21,7 +37,21 @@ export const columns: ColumnDef<FutureDto>[] = [
       return (
         <>
           <span className="mr-1">$</span>
-          <span className="truncate font-medium">{lastPrice.toLocaleString('es-ES')}</span>
+          <span className="truncate font-medium">{lastPrice.toLocaleString("es-ES")}</span>
+        </>
+      );
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "closingPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Precio de cierre" />,
+    cell: ({ row }) => {
+      const closingPrice: number = row.getValue("closingPrice");
+      return (
+        <>
+          <span className="mr-1">$</span>
+          <span className="truncate font-medium">{closingPrice.toLocaleString("es-ES")}</span>
         </>
       );
     },
@@ -49,7 +79,7 @@ export const columns: ColumnDef<FutureDto>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Volumen" />,
     cell: ({ row }) => {
       const tradeVolume: number = row.getValue("tradeVolume");
-      return <span className="truncate font-medium">{+tradeVolume.toLocaleString('es-ES')}</span>;
+      return <span className="truncate font-medium">{+tradeVolume.toLocaleString("es-ES")}</span>;
     },
     enableSorting: true,
   },

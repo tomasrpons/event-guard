@@ -1,8 +1,8 @@
 "use client";
 
 import { useStratexContext } from "~/hooks/stratex-hooks";
-import { columns } from "../components/columns";
-import { DataTable } from "../components/data-table";
+import { columns } from "./components/columns";
+import { DataTable } from "./components/data-table";
 
 export default function Acciones() {
   const { futures } = useStratexContext();
