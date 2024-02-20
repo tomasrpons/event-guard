@@ -4,35 +4,51 @@ import { useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 
 type ClockProps = {
-  initial: Date;
   className?: string;
 };
 
-const Clock: React.FC<ClockProps> = ({ initial, className }) => {
-  const [time, setTime] = useState(initial);
+const dateOptions: Intl.DateTimeFormatOptions = {
+  weekday: "long",
+  day: "numeric",
+  year: "numeric",
+  month: "long",
+};
 
-  const tick = () => {
-    setTime(new Date());
+const hourOptions: Intl.DateTimeFormatOptions = {
+  hour: "numeric",
+  minute: "2-digit",
+  second: "2-digit",
+};
+
+const Clock: React.FC<ClockProps> = ({ className }) => {
+  const [hour, setHour] = useState<Date>(new Date());
+
+  const hourFormat = new Intl.DateTimeFormat("es-ES", hourOptions);
+  const dateFormat = new Intl.DateTimeFormat("es-ES", dateOptions);
+
+  const hora = hourFormat.format(hour);
+  const fecha = dateFormat.format(new Date());
+
+  const getHora = (date: Date) => {
+    const ONE_SECOND = 1000;
+    useEffect(() => {
+      const time = setTimeout(() => {
+        setHour(date);
+      }, ONE_SECOND);
+      return () => {
+        clearTimeout(time);
+      };
+    }, [hour]);
+    return hora;
   };
 
-  useEffect(() => {
-    const timerID = setInterval(() => tick(), 1000);
-
-    return function cleanup() {
-      clearInterval(timerID);
-    };
-  });
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
   return (
     <div className={cn("tabular-nums", className)}>
-      {time.toLocaleTimeString("es-AR", {
-        timeZone: "America/Argentina/Cordoba",
-        hour: "numeric",
-        day: "numeric",
-        month: "long",
-        minute: "2-digit",
-        second: "2-digit",
-      })}
+      {capitalizeFirstLetter(fecha)} {getHora(new Date())}
     </div>
   );
 };

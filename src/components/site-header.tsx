@@ -1,13 +1,13 @@
 "use client";
+import dynamic from "next/dynamic";
 
-import Clock from "./clock";
+const NoSSRClock = dynamic(() => import("~/components/clock"), { ssr: false });
 import Image from "next/image";
 import XLogo from "public/x-logo-black.png";
 import { useStratexContext } from "~/hooks/stratex-hooks";
 import { cn } from "~/lib/utils";
 
 const SiteHeader: React.FC = () => {
-  const date = new Date();
   const { isMarketClosed } = useStratexContext();
 
   return (
@@ -20,7 +20,7 @@ const SiteHeader: React.FC = () => {
             <p>Mercado {isMarketClosed ? "cerrado" : "abierto"} </p>
             <div className={cn("mx-2 h-2 w-2 rounded", isMarketClosed ? "bg-red-400" : "bg-green-400")} />
           </div>
-          <Clock initial={date} className="hidden xl:block" />
+          <NoSSRClock className="hidden xl:block" />
           <div className="h-7 w-7 lg:ml-4">
             {/* <Link to> */}
             <Image src={XLogo} alt="X Logo" />
