@@ -332,7 +332,7 @@ export const usePrimary = () => {
 
     useEffect(() => {
         const socket = new WebSocket(
-            process.env.NODE_ENV === 'production' ? "wss://ec2-54-208-218-254.compute-1.amazonaws.com:3500" : "wss://localhost:3500",
+            process.env.NODE_ENV === 'production' ? "wss://stratex-floral-glade-7775.fly.dev" : "wss://localhost:3500",
         );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
