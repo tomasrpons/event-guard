@@ -10,7 +10,6 @@ type ClockProps = {
 const dateOptions: Intl.DateTimeFormatOptions = {
   weekday: "long",
   day: "numeric",
-  year: "numeric",
   month: "long",
 };
 
