@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function Dashboard() {
-  redirect("/dashboard/futuros/acciones");
+  redirect("/dashboard/futuros/dolar");
 }

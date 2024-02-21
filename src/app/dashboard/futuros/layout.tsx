@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "~/lib/utils";
 
 const markets = [
-  { name: "Acciones", href: "/dashboard/futuros/acciones" },
   { name: "Dólar", href: "/dashboard/futuros/dolar" },
+  { name: "Acciones", href: "/dashboard/futuros/acciones" },
 ] as const;
 
 export default function FuturosLayout({ children }: { children: React.ReactNode }) {

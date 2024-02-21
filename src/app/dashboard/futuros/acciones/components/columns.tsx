@@ -103,7 +103,7 @@ export const columns: ColumnDef<FutureDto>[] = [
       const tea: number = row.getValue("effectiveInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(tea) ? tea : 0}
+          {!isNaN(tea) ? tea.toLocaleString('es-ES') : 0}
           <span className="ml-1">%</span>
         </span>
       );
@@ -130,7 +130,7 @@ export const columns: ColumnDef<FutureDto>[] = [
       const tna: number = row.getValue("nominalInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(tna) ? tna : 0}
+          {!isNaN(tna) ? tna.toLocaleString('es-ES') : 0}
           <span className="ml-1">%</span>
         </span>
       );
@@ -157,7 +157,7 @@ export const columns: ColumnDef<FutureDto>[] = [
       const impliedInterestRate: number = row.getValue("impliedInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(impliedInterestRate) ? impliedInterestRate : 0}
+          {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString('es-ES') : 0}
           <span className="ml-1">%</span>
         </span>
       );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getNextMonthTicker } from "~/lib/utils";
 
 export type TickerDto = {
     [Key in L1Keys]?: Key extends "ticker" ? string : Key extends "operationDate" ? Date : number;
@@ -8,14 +9,16 @@ export type TickerDto = {
     variation?: number;
 }
 
-export type FutureDto = {
-    impliedInterestRate?: number;
-    nominalInterestRate?: number;
-    effectiveInterestRate?: number;
-    forwardTem?: number;
-    forwardMaturity?: string;
-    forwardContractSegment?: ForwardContractSegment;
-} & TickerDto;
+export type FutureDto = Partial<Pick<ValueTypes,
+    'impliedInterestRate' |
+    'nominalInterestRate' |
+    'effectiveInterestRate' |
+    'forwardContractSegment' |
+    'forwardMaturity' |
+    'forwardTem' |
+    'forwardTemT1'
+>> & TickerDto
+
 export type StockDto = {
     dollarMEP?: number;
 } & TickerDto;
@@ -82,7 +85,8 @@ type ValueTypes = {
     nominalInterestRate: number;
     effectiveInterestRate: number;
     forwardMaturity: string;
-    forwardContractSegment?: ForwardContractSegment;
+    forwardContractSegment: ForwardContractSegment;
+    forwardTemT1: number;
     dollarMep: number;
     variation: number;
 };
@@ -126,8 +130,10 @@ type UpdateTickerInput = {
         forwardTem?: TickerValues;
         closingPrice?: TickerValues;
         forwardContractSegment?: TickerValues;
+        forwardTemT1?: TickerValues;
     }
 }
+
 const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
     try {
         return JSON.parse(primaryData) as EventGuardTickerDto;
@@ -149,8 +155,8 @@ const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.D
     const castedImpliedInterestRate = isNumber(impliedInterestRate?.value) ? +Number(impliedInterestRate?.value).toFixed(2) : 0;
     const castedVariation = isNumber(variation?.value) ? Number(variation?.value) : 0;
     const castedDollarMEP = isNumber(dollarMEP?.value) ? Number(dollarMEP?.value) : 0;
-    const castedForwardConstractSegment = typeof forwardContractSegment?.value === 'string' ? forwardContractSegment?.value : null; 
-    const castedClosingPrice = isNumber(closingPrice?.value) ? Number(closingPrice?.value) : 0 
+    const castedForwardConstractSegment = typeof forwardContractSegment?.value === 'string' ? forwardContractSegment?.value : null;
+    const castedClosingPrice = isNumber(closingPrice?.value) ? Number(closingPrice?.value) : 0
     setTickerData((prev) => ({
         ...prev,
         [ticker]: {
@@ -229,7 +235,8 @@ const handleWebSocketMessage = (
                     break;
                 case "FORWARD-RATES":
                     const forwardTem = values.find((val) => val.key === "forwardTem");
-                    updateForwardRates({ ticker, values: { forwardTem } }, setFutures);
+                    const forwardTemT1 = values.find((val) => val.key === "forwardTemT1");
+                    updateForwardRates({ ticker, values: { forwardTem, forwardTemT1 } }, setFutures);
                     break;
                 case "FORWARD-DURATION":
                     const forwardMaturity = values.find((val) => val.key === "forwardMaturity");
@@ -247,6 +254,20 @@ const handleWebSocketMessage = (
         }
     }
 };
+
+const handleForwardTemT1 = (inputTicker: string, forwardTemT1: TickerValues | undefined, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
+    const ticker = getNextMonthTicker(inputTicker)
+    setFutures((prev) => ({
+        ...prev,
+        [ticker]: {
+            ...prev[ticker],
+            ticker,
+            forwardTem:
+                +(Number(forwardTemT1?.value) * 100).toFixed(2) ??
+                prev[ticker]?.forwardTem,
+        },
+    }));
+}
 
 const updateFutureRates = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
     const { values, ticker } = input;
@@ -284,7 +305,7 @@ const updateForwardDuration = (input: UpdateTickerInput, setFutures: React.Dispa
 
 const updateForwardRates = (input: UpdateTickerInput, setFutures: React.Dispatch<React.SetStateAction<Record<string, FutureDto>>>) => {
     const { values, ticker } = input;
-    const { forwardTem } = values;
+    const { forwardTem, forwardTemT1 } = values;
     setFutures((prev) => ({
         ...prev,
         [ticker]: {
@@ -295,6 +316,9 @@ const updateForwardRates = (input: UpdateTickerInput, setFutures: React.Dispatch
                 prev[ticker]?.forwardTem,
         },
     }));
+    if (forwardTemT1) {
+        handleForwardTemT1(ticker, forwardTemT1, setFutures);
+    }
 };
 
 const updatePriceChange = (input: UpdateTickerInput,

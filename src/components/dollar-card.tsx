@@ -30,7 +30,7 @@ const DollarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sell
             </div>
           ) : null}
           <div className="flex flex-col">
-            <p className="font-semibold">${sellPrice}</p>
+            <p className="font-semibold">${sellPrice?.toLocaleString('es-ES')}</p>
           </div>
         </div>
         <p className="text-xs">
