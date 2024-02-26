@@ -20,7 +20,7 @@ const DollarCard: React.FC<DolarCardProps> = ({ title, toolTipText, buyPrice, se
             <InfoCircledIcon className="h-4 w-4" />
           </TooltipTrigger>
           <TooltipContent className="max-w-lg">
-            <p className="text-wrap">{toolTipText}</p>
+            <p className="text-wrap-bug">{toolTipText}</p>
           </TooltipContent>
         </Tooltip>
       </div>

@@ -26,9 +26,9 @@ const SiteHeader: React.FC = () => {
                 <InfoCircledIcon className="h-4 w-4" />
               </TooltipTrigger>
               <TooltipContent className="max-w-lg">
-                <p className="text-wrap">
+                <p className="break-words">
                   El horario de Matba-Rofex para la operatoria de dólar es de 10 a 15 mientras que para RFX20 y acciones
-                  individuales es de 10.30 a 17.
+                  individuales es de 10:30 a 17:00
                 </p>
               </TooltipContent>
             </Tooltip>
