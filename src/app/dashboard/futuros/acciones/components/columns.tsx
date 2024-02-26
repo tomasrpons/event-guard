@@ -1,6 +1,6 @@
 "use client";
 
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import type { FutureDto } from "~/hooks/use-stratex";
@@ -239,9 +239,9 @@ const LastPriceTable = (input: { bidPrice: string; bidSize: string; offerPrice: 
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Compra</TableHead>
-          <TableHead>Tamaño de la compra</TableHead>
+          <TableHead>Volumen de compra</TableHead>
           <TableHead>Venta</TableHead>
-          <TableHead className="text-right">Tamaño de la venta</TableHead>
+          <TableHead className="text-right">Volumen de venta</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
