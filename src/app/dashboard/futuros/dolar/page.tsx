@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useMemo } from "react";
 import { columns as FuturesColumns } from "~/app/dashboard/futuros/dolar/components/columns";
@@ -21,6 +21,7 @@ export default function Dolar() {
   const dollars = futures.filter((future) => future.forwardContractSegment === "DOLAR");
 
   const orderedTickers = useMemo(() => orderByForwardMaturity(dollars), [dollars]);
+  const tickers = orderedTickers.map((tick) => tick.ticker!);
 
   const chartData = useMemo(
     () => [
@@ -32,7 +33,9 @@ export default function Dolar() {
       },
       {
         label: "TEA",
-        data: orderedTickers.map((dlr) => (typeof dlr.effectiveInterestRate === "number" ? dlr.effectiveInterestRate : 0)),
+        data: orderedTickers.map((dlr) =>
+          typeof dlr.effectiveInterestRate === "number" ? dlr.effectiveInterestRate : 0
+        ),
         borderColor: "rgb(163 230 53)",
         backgroundColor: "rgb(163 230 53)",
       },
@@ -61,8 +64,8 @@ export default function Dolar() {
   return (
     <>
       <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4 ">
-        <LineChart labels={orderedTickers.map((tick) => tick.ticker!)} datasets={chartData} title="Curva normal" />
-        <LineChart title="Curva forward" labels={orderedTickers.map((tick) => tick.ticker!)} datasets={forwardChartData} />
+        <LineChart title="Curva normal" labels={tickers} datasets={chartData} />
+        <LineChart title="Curva forward" labels={tickers} datasets={forwardChartData} />
       </div>
       <div className="mt-4">
         <h2 className="mb-2 text-3xl font-bold">Resumen</h2>

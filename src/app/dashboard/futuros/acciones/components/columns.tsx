@@ -53,10 +53,13 @@ export const columns: ColumnDef<FutureDto>[] = [
       const offerSize = row.original.offerSize;
       return (
         <Tooltip>
-          <TooltipTrigger>
+          <div className="flex gap-1 items-center">
             <span className="mr-1">$</span>
             <span className="truncate font-medium">{lastPrice.toLocaleString("es-ES")}</span>
-          </TooltipTrigger>
+            <TooltipTrigger>
+              <InfoCircledIcon />
+            </TooltipTrigger>
+          </div>
           <TooltipContent>
             <LastPriceTable
               bidPrice={bidPrice?.toLocaleString("es-ES") ?? "0"}
