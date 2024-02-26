@@ -1,5 +1,6 @@
-"use client";
+'use client'
 
+import React, { useMemo } from "react";
 import { columns as FuturesColumns } from "~/app/dashboard/futuros/dolar/components/columns";
 import { DataTable as FuturesDataTable } from "~/app/dashboard/futuros/dolar/components/data-table";
 import { useStratexContext } from "~/hooks/stratex-hooks";
@@ -18,53 +19,50 @@ function orderByForwardMaturity(dollars: FutureDto[]) {
 export default function Dolar() {
   const { futures } = useStratexContext();
   const dollars = futures.filter((future) => future.forwardContractSegment === "DOLAR");
-  const orderedTickers = orderByForwardMaturity(dollars);
+
+  const orderedTickers = useMemo(() => orderByForwardMaturity(dollars), [dollars]);
+
+  const chartData = useMemo(
+    () => [
+      {
+        label: "Tasa Implícita",
+        data: orderedTickers.map((dlr) => (typeof dlr.impliedInterestRate === "number" ? dlr.impliedInterestRate : 0)),
+        borderColor: "rgb(77 124 15)",
+        backgroundColor: "rgb(77 124 15)",
+      },
+      {
+        label: "TEA",
+        data: orderedTickers.map((dlr) => (typeof dlr.effectiveInterestRate === "number" ? dlr.effectiveInterestRate : 0)),
+        borderColor: "rgb(163 230 53)",
+        backgroundColor: "rgb(163 230 53)",
+      },
+      {
+        label: "TNA",
+        data: orderedTickers.map((dlr) => (typeof dlr.nominalInterestRate === "number" ? dlr.nominalInterestRate : 0)),
+        borderColor: "rgb(22 163 74)",
+        backgroundColor: "rgb(22 163 74)",
+      },
+    ],
+    [orderedTickers]
+  );
+
+  const forwardChartData = useMemo(
+    () => [
+      {
+        label: "TEM",
+        data: orderedTickers.map((dlr) => (typeof dlr.forwardTem === "number" ? dlr.forwardTem : 0)),
+        borderColor: "rgb(163 230 53)",
+        backgroundColor: "rgb(163 230 53)",
+      },
+    ],
+    [orderedTickers]
+  );
 
   return (
     <>
       <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4 ">
-        <LineChart
-          labels={orderedTickers.map((tick) => tick.ticker!)}
-          datasets={[
-            {
-              label: "TEA",
-              data: orderedTickers.map((dlr) =>
-                typeof dlr.effectiveInterestRate === "number" ? dlr.effectiveInterestRate : 0
-              ),
-              borderColor: "rgb(163 230 53)",
-              backgroundColor: "rgb(163 230 53)",
-            },
-            {
-              label: "TNA",
-              data: orderedTickers.map((dlr) =>
-                typeof dlr.nominalInterestRate === "number" ? dlr.nominalInterestRate : 0
-              ),
-              borderColor: "rgb(22 163 74)",
-              backgroundColor: "rgb(22 163 74)",
-            },
-            {
-              label: "Tasa Implícita",
-              data: orderedTickers.map((dlr) =>
-                typeof dlr.impliedInterestRate === "number" ? dlr.impliedInterestRate : 0
-              ),
-              borderColor: "rgb(77 124 15)",
-              backgroundColor: "rgb(77 124 15)",
-            },
-          ]}
-          title="Curva normal"
-        />
-        <LineChart
-          title="Curva forward"
-          labels={orderedTickers.map((tick) => tick.ticker!)}
-          datasets={[
-            {
-              label: "TEM",
-              data: orderedTickers.map((dlr) => (typeof dlr.forwardTem === "number" ? dlr.forwardTem : 0)),
-              borderColor: "rgb(163 230 53)",
-              backgroundColor: "rgb(163 230 53)",
-            },
-          ]}
-        />
+        <LineChart labels={orderedTickers.map((tick) => tick.ticker!)} datasets={chartData} title="Curva normal" />
+        <LineChart title="Curva forward" labels={orderedTickers.map((tick) => tick.ticker!)} datasets={forwardChartData} />
       </div>
       <div className="mt-4">
         <h2 className="mb-2 text-3xl font-bold">Resumen</h2>

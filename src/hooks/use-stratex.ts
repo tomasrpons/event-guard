@@ -118,20 +118,24 @@ export type EventGuardTickerDto = {
 type UpdateTickerInput = {
     ticker: string;
     tickerType?: TickerType;
-    values: {
-        tradeVolume?: TickerValues;
-        lastPrice?: TickerValues;
-        impliedInterestRate?: TickerValues;
-        nominalInterestRate?: TickerValues;
-        effectiveInterestRate?: TickerValues;
-        variation?: TickerValues;
-        forwardMaturity?: TickerValues;
-        dollarMEP?: TickerValues;
-        forwardTem?: TickerValues;
-        closingPrice?: TickerValues;
-        forwardContractSegment?: TickerValues;
-        forwardTemT1?: TickerValues;
-    }
+    values: Partial<{
+        tradeVolume: TickerValues;
+        lastPrice: TickerValues;
+        impliedInterestRate: TickerValues;
+        nominalInterestRate: TickerValues;
+        effectiveInterestRate: TickerValues;
+        variation: TickerValues;
+        forwardMaturity: TickerValues;
+        dollarMEP: TickerValues;
+        forwardTem: TickerValues;
+        closingPrice: TickerValues;
+        forwardContractSegment: TickerValues;
+        forwardTemT1: TickerValues;
+        bidPrice: TickerValues;
+        bidSize: TickerValues;
+        offerPrice: TickerValues;
+        offerSize: TickerValues;
+    }>
 }
 
 const parsePrimaryData = (primaryData: string): EventGuardTickerDto | null => {
@@ -149,12 +153,16 @@ const isNumber = (value: unknown): boolean => {
 
 const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.Dispatch<React.SetStateAction<Record<string, TickerDto | FutureDto | StockDto>>>) => {
     const { ticker, values } = inputData;
-    const { tradeVolume, lastPrice, variation, closingPrice, impliedInterestRate, dollarMEP, forwardContractSegment } = values;
+    const { tradeVolume, lastPrice, variation, closingPrice, impliedInterestRate, dollarMEP, forwardContractSegment, bidPrice, bidSize, offerPrice, offerSize } = values;
     const castedTradeVolume = isNumber(tradeVolume?.value) ? Number(tradeVolume?.value) : 0;
     const castedLastPrice = isNumber(lastPrice?.value) ? Number(lastPrice?.value) : 0;
     const castedImpliedInterestRate = isNumber(impliedInterestRate?.value) ? +Number(impliedInterestRate?.value).toFixed(2) : 0;
     const castedVariation = isNumber(variation?.value) ? Number(variation?.value) : 0;
     const castedDollarMEP = isNumber(dollarMEP?.value) ? Number(dollarMEP?.value) : 0;
+    const castedBidPrice = isNumber(bidPrice?.value) ? Number(bidPrice?.value) : 0;
+    const castedBidSize = isNumber(bidSize?.value) ? Number(bidSize?.value) : 0;
+    const castedOfferSize = isNumber(offerSize?.value) ? Number(offerSize?.value) : 0;
+    const castedOfferPrice = isNumber(offerPrice?.value) ? Number(offerPrice?.value) : 0;
     const castedForwardConstractSegment = typeof forwardContractSegment?.value === 'string' ? forwardContractSegment?.value : null;
     const castedClosingPrice = isNumber(closingPrice?.value) ? Number(closingPrice?.value) : 0
     setTickerData((prev) => ({
@@ -166,6 +174,10 @@ const updateTickerValues = (inputData: UpdateTickerInput, setTickerData: React.D
             lastPrice: castedLastPrice === 0 && isNumber(prev[ticker]?.lastPrice) ? prev[ticker]?.lastPrice : castedLastPrice,
             impliedInterestRate: castedImpliedInterestRate === 0 && isNumber((prev[ticker] as FutureDto)?.impliedInterestRate) ? (prev[ticker] as FutureDto)?.impliedInterestRate : castedImpliedInterestRate,
             variation: castedVariation === 0 && isNumber(prev[ticker]?.variation) ? prev[ticker]?.variation : castedVariation,
+            bidPrice: castedBidPrice === 0 && isNumber(prev[ticker]?.bidPrice) ? prev[ticker]?.bidPrice : castedBidPrice,
+            bidSize: castedBidSize === 0 && isNumber(prev[ticker]?.bidSize) ? prev[ticker]?.bidSize : castedBidSize,
+            offerPrice: castedOfferPrice === 0 && isNumber(prev[ticker]?.offerPrice) ? prev[ticker]?.offerPrice : castedOfferPrice,
+            offerSize: castedOfferSize === 0 && isNumber(prev[ticker]?.offerSize) ? prev[ticker]?.offerSize : castedOfferSize,
             dollarMEP: castedDollarMEP,
             closingPrice: castedClosingPrice === 0 && isNumber(prev[ticker]?.closingPrice) ? prev[ticker]?.closingPrice : castedClosingPrice,
             forwardContractSegment: castedForwardConstractSegment ?? (prev[ticker] as FutureDto)?.forwardContractSegment,
@@ -198,6 +210,10 @@ const handleWebSocketMessage = (
         const tradeVolume = values.find((val) => val.key === "tradeVolume");
         const lastPrice = values.find((val) => val.key === "lastPrice");
         const closingPrice = values.find((val) => val.key === "closingPrice");
+        const bidPrice = values.find((val) => val.key === "bidPrice");
+        const bidSize = values.find((val) => val.key === "bidSize");
+        const offerPrice = values.find((val) => val.key === "offerPrice");
+        const offerSize = values.find((val) => val.key === "offerSize");
         const forwardContractSegment = values.find((val) => val.key === "forwardContractSegment");
         if (ticker === 'tc-mayorista' || ticker === 'I.CCL' || ticker === 'I.RFX20') {
             const offerPrice = values.find((val) => val.key === 'offerPrice');
@@ -216,10 +232,10 @@ const handleWebSocketMessage = (
         if (variableType === 'L1') {
             switch (tickerType) {
                 case "FUTURE":
-                    updateFutures({ ticker, values: { tradeVolume, lastPrice, closingPrice, forwardContractSegment } }, setFutures);
+                    updateFutures({ ticker, values: { tradeVolume, lastPrice, closingPrice, bidPrice, bidSize, offerPrice, offerSize, forwardContractSegment } }, setFutures);
                     break;
                 case "STOCK":
-                    updateStocks({ ticker, values: { tradeVolume, lastPrice, closingPrice, forwardContractSegment } }, setStocks);
+                    updateStocks({ ticker, values: { tradeVolume, lastPrice, closingPrice, bidPrice, bidSize, offerPrice, offerSize, forwardContractSegment } }, setStocks);
                     break;
                 case "BOND":
                     updateBonds({ ticker, values: { tradeVolume, lastPrice, forwardContractSegment } }, setBonds);

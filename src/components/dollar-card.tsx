@@ -1,25 +1,28 @@
 "use client";
-import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import React from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 type DolarCardProps = {
   title?: string;
-  variation?: number;
   buyPrice?: number;
   sellPrice?: number;
+  toolTipText?: string;
   operationDate?: Date;
 };
 
-const DollarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sellPrice, operationDate }) => {
+const DollarCard: React.FC<DolarCardProps> = ({ title, toolTipText, buyPrice, sellPrice, operationDate }) => {
   return (
     <div className="w-64 rounded border-2 border-slate-400 p-2 shadow-md">
-      <div className="mb-4 flex justify-between">
+      <div className="mb-4 flex justify-between items-center">
         <h2 className="text-xl font-bold text-blue-600">{title}</h2>
-        {variation ? (
-          <div className="flex items-center gap-2 text-xl font-bold text-green-600">
-            <ArrowUpIcon className="h-6 w-6 text-green-600" />
-            {variation}%
-          </div>
-        ) : null}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent className="max-w-lg text-wrap" style={{ textWrap: "wrap" }}>
+            <p>{toolTipText}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       <div className={"flex items-end justify-between"}>
         <div className="flex gap-4">
@@ -30,7 +33,7 @@ const DollarCard: React.FC<DolarCardProps> = ({ title, variation, buyPrice, sell
             </div>
           ) : null}
           <div className="flex flex-col">
-            <p className="font-semibold">${sellPrice?.toLocaleString('es-ES')}</p>
+            <p className="font-semibold">${sellPrice?.toLocaleString("es-ES")}</p>
           </div>
         </div>
         <p className="text-xs">

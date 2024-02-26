@@ -2,9 +2,10 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import type { FutureDto } from "~/hooks/use-primary";
+import type { FutureDto } from "~/hooks/use-stratex";
 import { cn, convertToDate } from "~/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 export const columns: ColumnDef<FutureDto>[] = [
   {
@@ -28,7 +29,18 @@ export const columns: ColumnDef<FutureDto>[] = [
   },
   {
     accessorKey: "lastPrice",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Último precio" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Último precio">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Último precio operado en Rofex</p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
+    ),
     cell: ({ row }) => {
       const lastPrice: number = row.getValue("lastPrice");
       return (
@@ -42,7 +54,18 @@ export const columns: ColumnDef<FutureDto>[] = [
   },
   {
     accessorKey: "closingPrice",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Precio de cierre" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Precio de cierre">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Último precio operado de la última rueda bursátil completa</p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
+    ),
     cell: ({ row }) => {
       const closingPrice: number = row.getValue("closingPrice");
       return (
@@ -56,7 +79,18 @@ export const columns: ColumnDef<FutureDto>[] = [
   },
   {
     accessorKey: "variation",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Variación" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Variación">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Variación que surge entre último precio y precio de cierre </p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
+    ),
     cell: ({ row }) => {
       const variation: number = row.getValue("variation");
       return (
@@ -73,7 +107,18 @@ export const columns: ColumnDef<FutureDto>[] = [
   },
   {
     accessorKey: "tradeVolume",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Volumen" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Volumen">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Cantidad de contratos operados en la actual rueda bursátil </p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
+    ),
     cell: ({ row }) => {
       const tradeVolume: number = row.getValue("tradeVolume");
       return <span className="truncate font-medium">{+tradeVolume.toLocaleString("es-ES")}</span>;
@@ -81,26 +126,52 @@ export const columns: ColumnDef<FutureDto>[] = [
     enableSorting: true,
   },
   {
+    accessorKey: "impliedInterestRate",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Tasa Implícita">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Calculo de la Tasa Implícita</p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
+    ),
+    cell: ({ row }) => {
+      const impliedInterestRate: number = row.getValue("impliedInterestRate");
+      return (
+        <span className="truncate font-medium flex">
+          {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
+          <span className="ml-1">%</span>
+        </span>
+      );
+    },
+    enableSorting: true,
+  },
+  {
     accessorKey: "effectiveInterestRate",
     header: ({ column }) => (
-      <>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <DataTableColumnHeader column={column} title="TEA" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Calculo de TEA</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </>
+      <DataTableColumnHeader column={column} title="TEA">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              Tasa efectiva anual que surge de la variación implícita entre el dólar mayorista y el precio de cierre del
+              respectivo contrato.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
     ),
     cell: ({ row }) => {
       const tea: number = row.getValue("effectiveInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(tea) ? tea.toLocaleString('es-ES') : 0}
+          {!isNaN(tea) ? tea.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
         </span>
       );
@@ -110,51 +181,25 @@ export const columns: ColumnDef<FutureDto>[] = [
   {
     accessorKey: "nominalInterestRate",
     header: ({ column }) => (
-      <>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <DataTableColumnHeader column={column} title="TNA" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Calculo de TNA</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </>
+      <DataTableColumnHeader column={column} title="TNA">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              Tasa nominal anual que surge de la variación implícita entre el dólar mayorista y el precio de cierre del
+              respectivo contrato.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
     ),
     cell: ({ row }) => {
       const tna: number = row.getValue("nominalInterestRate");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(tna) ? tna.toLocaleString('es-ES') : 0}
-          <span className="ml-1">%</span>
-        </span>
-      );
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: "impliedInterestRate",
-    header: ({ column }) => (
-      <>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <DataTableColumnHeader column={column} title="Tasa Implícita" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Calculo de la Tasa Implícita</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </>
-    ),
-    cell: ({ row }) => {
-      const impliedInterestRate: number = row.getValue("impliedInterestRate");
-      return (
-        <span className="truncate font-medium flex">
-          {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString('es-ES') : 0}
+          {!isNaN(tna) ? tna.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
         </span>
       );
@@ -164,24 +209,25 @@ export const columns: ColumnDef<FutureDto>[] = [
   {
     accessorKey: "forwardTem",
     header: ({ column }) => (
-      <>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <DataTableColumnHeader column={column} title="TEM" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Calculo de TEM</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </>
+      <DataTableColumnHeader column={column} title="TEM">
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoCircledIcon className="h-4 w-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              Tasa efectiva mensual que surge de la variación implícita entre el dólar mayorista y el precio de cierre
+              del respectivo contrato.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableColumnHeader>
     ),
     cell: ({ row }) => {
       const forwardTem: number = row.getValue("forwardTem");
       return (
         <span className="truncate font-medium flex">
-          {!isNaN(forwardTem) ? forwardTem.toLocaleString('es-ES') : 0}
+          {!isNaN(forwardTem) ? forwardTem.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
         </span>
       );

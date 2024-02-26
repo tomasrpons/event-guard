@@ -9,6 +9,7 @@ import { ThemeProvider } from "~/components/providers";
 import SiteHeader from "~/components/site-header";
 import { TailwindIndicator } from "~/components/tailwind-indicator";
 import StratexProvider from "~/context/stratex/stratex-provider.component";
+import { TooltipProvider } from "~/components/ui/tooltip";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,10 +49,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TRPCReactProvider cookies={cookies().toString()}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <StratexProvider>
-              <div className="relative flex min-h-screen flex-col">
-                <SiteHeader />
-                {children}
-              </div>
+              <TooltipProvider>
+                <div className="relative flex min-h-screen flex-col">
+                  <SiteHeader />
+                  {children}
+                </div>
+              </TooltipProvider>
               <TailwindIndicator />
             </StratexProvider>
           </ThemeProvider>
