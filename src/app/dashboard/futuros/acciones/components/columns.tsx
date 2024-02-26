@@ -166,9 +166,10 @@ export const columns: ColumnDef<FutureDto>[] = [
     cell: ({ row }) => {
       const impliedInterestRate: number = row.getValue("impliedInterestRate");
       return (
-        <span className="truncate font-medium flex">
-          {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
-          <span className="ml-1">%</span>
+        <span className="truncate font-medium flex text-center">
+          -
+          {/* {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
+          <span className="ml-1">%</span> */}
         </span>
       );
     },
