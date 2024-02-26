@@ -356,7 +356,7 @@ export const usePrimary = () => {
 
     useEffect(() => {
         const socket = new WebSocket(
-            process.env.NODE_ENV === 'production' ? "wss://stratex-floral-glade-7775.fly.dev" : "ws://localhost:3500",
+            process.env.NODE_ENV === 'production' ? "wss://stratex.doctacapital.com.ar" : "ws://localhost:3500",
         );
         setSocket(socket);
         socket.addEventListener("message", (event: MessageEvent<string>) => {
