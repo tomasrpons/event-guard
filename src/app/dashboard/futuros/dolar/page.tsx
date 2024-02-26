@@ -22,7 +22,8 @@ export default function Dolar() {
 
   return (
     <>
-      <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4 ">
+        hola
         <LineChart
           labels={orderedTickers.map((tick) => tick.ticker!)}
           datasets={[
