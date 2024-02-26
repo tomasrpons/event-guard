@@ -4,7 +4,7 @@ import { columns as FuturesColumns } from "~/app/dashboard/futuros/dolar/compone
 import { DataTable as FuturesDataTable } from "~/app/dashboard/futuros/dolar/components/data-table";
 import { useStratexContext } from "~/hooks/stratex-hooks";
 import LineChart from "./components/line-chart";
-import { type FutureDto } from "~/hooks/use-primary";
+import { type FutureDto } from "~/hooks/use-stratex";
 import { convertToDate } from "~/lib/utils";
 
 function orderByForwardMaturity(dollars: FutureDto[]) {

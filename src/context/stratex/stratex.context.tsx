@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { StockDto, FutureDto, BondDto, DollarDto } from "~/hooks/use-primary";
+import type { StockDto, FutureDto, BondDto, DollarDto } from "~/hooks/use-stratex";
 
 export interface StratexContextInterface {
   stocks: StockDto[];

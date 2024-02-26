@@ -2,13 +2,13 @@
 
 import React from "react";
 import { StratexContext } from "./stratex.context";
-import { usePrimary } from "~/hooks/use-primary";
+import { useStratex } from "~/hooks/use-stratex";
 interface StratexProviderProps {
   children: React.ReactNode;
 }
 
 const StratexProvider: React.FC<StratexProviderProps> = (props) => {
-  const { futures, stocks, bonds, dollars } = usePrimary();
+  const { futures, stocks, bonds, dollars } = useStratex();
   const isMarketClosed = () => {
     const currentDateTime = new Date().toLocaleString("en-US", { timeZone: "America/Argentina/Cordoba" });
     const currentDay = new Date(currentDateTime).getDay();
