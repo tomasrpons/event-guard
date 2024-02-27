@@ -1,18 +1,58 @@
 "use client";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import type { FutureDto } from "~/hooks/use-stratex";
 import { cn } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { DividerVerticalIcon, InfoCircledIcon, MinusCircledIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import { type FutureDto } from "~/hooks/use-stratex";
+import LastPriceTableTooltip from "~/components/last-price-table-tooltip";
 
-export const columns: ColumnDef<FutureDto>[] = [
+export type FutureStocksTableData = {
+  ticker?: string;
+  subRows?: FutureStocksTableData[];
+} & FutureDto;
+
+export const columns: ColumnDef<FutureStocksTableData>[] = [
+  {
+    id: "expander",
+    header: () => null,
+    cell: ({ row }) => {
+      return (
+        <div
+          style={{
+            paddingLeft: `${row.depth * 2}rem`,
+          }}>
+          {row.getCanExpand() && row.depth < 1 ? (
+            <button
+              {...{
+                onClick: row.getToggleExpandedHandler(),
+                style: { cursor: "pointer" },
+              }}>
+              {row.getIsExpanded() ? <MinusCircledIcon /> : <PlusCircledIcon />}
+            </button>
+          ) : null}
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "ticker",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Ticker" />,
-    cell: ({ row }) => <div>{row.getValue("ticker")}</div>,
+    cell: (info) => {
+      const subRows = info.row.subRows;
+      return (
+        <div className="flex gap-1 items-center">
+          <span>{info.getValue() as string}</span>
+          {info.row.depth === 0 ? (
+            <div className="flex items-center">
+              <DividerVerticalIcon /> Contratos:{" "}
+              {subRows.reduce((acc, current) => acc + (current.original?.tradeVolume ?? 0), 0)}
+            </div>
+          ) : null}
+        </div>
+      );
+    },
     enableSorting: true,
     sortingFn: (a, b) => {
       if (a.original?.ticker && b.original?.ticker) {
@@ -45,31 +85,25 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const lastPrice: number = row.getValue("lastPrice");
-      const bidPrice = row.original.bidPrice;
-      const bidSize = row.original.bidSize;
-      const offerPrice = row.original.offerPrice;
-      const offerSize = row.original.offerSize;
-      return (
-        <Tooltip>
-          <div className="flex gap-1 items-center">
-            <span className="mr-1">$</span>
-            <span className="truncate font-medium">{lastPrice.toLocaleString("es-ES")}</span>
-            <TooltipTrigger>
-              <InfoCircledIcon />
-            </TooltipTrigger>
-          </div>
-          <TooltipContent>
-            <LastPriceTable
-              bidPrice={bidPrice?.toLocaleString("es-ES") ?? "0"}
-              bidSize={bidSize?.toLocaleString("es-ES") ?? "0"}
-              offerPrice={offerPrice?.toLocaleString("es-ES") ?? "0"}
-              offerSize={offerSize?.toLocaleString("es-ES") ?? "0"}
-            />
-          </TooltipContent>
-        </Tooltip>
-      );
+    cell: (info) => {
+      const bidPrice = info.row.original.bidPrice;
+      const bidSize = info.row.original.bidSize;
+      const offerPrice = info.row.original.offerPrice;
+      const offerSize = info.row.original.offerSize;
+      const lastPrice = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return (
+          <LastPriceTableTooltip
+            bidPrice={bidPrice ?? 0}
+            bidSize={bidSize ?? 0}
+            offerPrice={offerPrice ?? 0}
+            offerSize={offerSize ?? 0}
+            lastPrice={lastPrice ?? 0}
+          />
+        );
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -87,14 +121,13 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const closingPrice: number = row.getValue("closingPrice");
-      return (
-        <>
-          <span className="mr-1">$</span>
-          <span className="truncate font-medium">{closingPrice.toLocaleString("es-ES")}</span>
-        </>
-      );
+    cell: (info) => {
+      const closingPrice = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return <span className="font-medium">$ {closingPrice?.toLocaleString("es-ES") || 0}</span>;
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -112,17 +145,23 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const variation: number = row.getValue("variation");
-      return (
-        <span className="truncate font-medium">
-          <div className={cn("flex", variation > 0 ? "text-green-600" : variation < 0 ? "text-red-600" : undefined)}>
+    cell: (info) => {
+      const variation = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return (
+          <div
+            className={cn(
+              "flex font-medium",
+              variation > 0 ? "text-green-600" : variation < 0 ? "text-red-600" : undefined
+            )}>
             {variation > 0 ? "+" : undefined}
             {!isNaN(variation) ? (variation * 100).toFixed(2) : 0}
             <span className="ml-1">%</span>
           </div>
-        </span>
-      );
+        );
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -140,9 +179,13 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const tradeVolume: number = row.getValue("tradeVolume");
-      return <span className="truncate font-medium">{+tradeVolume.toLocaleString("es-ES")}</span>;
+    cell: (info) => {
+      const tradeVolume = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return <span className="font-medium">{tradeVolume?.toLocaleString("es-ES") || 0}</span>;
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -163,15 +206,18 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const impliedInterestRate: number = row.getValue("impliedInterestRate");
-      return (
-        <span className="truncate font-medium flex text-center">
-          -
-          {/* {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
-          <span className="ml-1">%</span> */}
-        </span>
-      );
+    cell: (info) => {
+      const impliedInterestRate = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return (
+          <div className="truncate font-medium flex">
+            {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
+            <span className="ml-1">%</span>
+          </div>
+        );
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -192,14 +238,18 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const tea: number = row.getValue("effectiveInterestRate");
-      return (
-        <span className="truncate font-medium flex">
-          {!isNaN(tea) ? tea.toLocaleString("es-ES") : 0}
-          <span className="ml-1">%</span>
-        </span>
-      );
+    cell: (info) => {
+      const effectiveInterestRate = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return (
+          <div className="truncate font-medium flex">
+            {!isNaN(effectiveInterestRate) ? effectiveInterestRate.toLocaleString("es-ES") : 0}
+            <span className="ml-1">%</span>
+          </div>
+        );
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
@@ -220,39 +270,19 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const tna: number = row.getValue("nominalInterestRate");
-      return (
-        <span className="truncate font-medium flex">
-          {!isNaN(tna) ? tna.toLocaleString("es-ES") : 0}
-          <span className="ml-1">%</span>
-        </span>
-      );
+    cell: (info) => {
+      const nominalInterestRate = info.getValue() as number;
+      if (info.row.depth > 0) {
+        return (
+          <div className="truncate font-medium flex">
+            {!isNaN(nominalInterestRate) ? nominalInterestRate.toLocaleString("es-ES") : 0}
+            <span className="ml-1">%</span>
+          </div>
+        );
+      } else {
+        return <span className="font-medium">-</span>;
+      }
     },
     enableSorting: true,
   },
 ];
-
-const LastPriceTable = (input: { bidPrice: string; bidSize: string; offerPrice: string; offerSize: string }) => {
-  const { bidPrice, bidSize, offerPrice, offerSize } = input;
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Compra</TableHead>
-          <TableHead>Volumen de compra</TableHead>
-          <TableHead>Venta</TableHead>
-          <TableHead className="text-right">Volumen de venta</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell className="font-medium">$ {bidPrice}</TableCell>
-          <TableCell>{bidSize}</TableCell>
-          <TableCell>$ {offerPrice}</TableCell>
-          <TableCell className="text-right">{offerSize}</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
-  );
-};

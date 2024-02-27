@@ -19,7 +19,7 @@ export default function FuturosLayout({ children }: { children: React.ReactNode 
             key={index}
             href={market.href}
             className={cn(
-              "flex h-7 items-center justify-center rounded-full px-4 text-center text-sm transition-colors hover:text-primary",
+              "flex h-7 items-center justify-center rounded-full px-4 text-center text-md transition-colors hover:text-primary",
               pathName === market.href ? "bg-muted font-medium text-primary" : "text-muted-foreground"
             )}>
             {market.name}

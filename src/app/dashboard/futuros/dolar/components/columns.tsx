@@ -6,6 +6,7 @@ import type { FutureDto } from "~/hooks/use-stratex";
 import { cn, convertToDate } from "~/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
+import LastPriceTableTooltip from "~/components/last-price-table-tooltip";
 
 export const columns: ColumnDef<FutureDto>[] = [
   {
@@ -41,13 +42,20 @@ export const columns: ColumnDef<FutureDto>[] = [
         </Tooltip>
       </DataTableColumnHeader>
     ),
-    cell: ({ row }) => {
-      const lastPrice: number = row.getValue("lastPrice");
+    cell: (info) => {
+      const bidPrice = info.row.original.bidPrice;
+      const bidSize = info.row.original.bidSize;
+      const offerPrice = info.row.original.offerPrice;
+      const offerSize = info.row.original.offerSize;
+      const lastPrice = info.getValue() as number;
       return (
-        <>
-          <span className="mr-1">$</span>
-          <span className="truncate font-medium">{lastPrice.toLocaleString("es-ES")}</span>
-        </>
+        <LastPriceTableTooltip
+          bidPrice={bidPrice ?? 0}
+          bidSize={bidSize ?? 0}
+          offerPrice={offerPrice ?? 0}
+          offerSize={offerSize ?? 0}
+          lastPrice={lastPrice ?? 0}
+        />
       );
     },
     enableSorting: true,
@@ -142,10 +150,10 @@ export const columns: ColumnDef<FutureDto>[] = [
     cell: ({ row }) => {
       const impliedInterestRate: number = row.getValue("impliedInterestRate");
       return (
-        <span className="truncate font-medium flex">
+        <div className="truncate font-medium flex">
           {!isNaN(impliedInterestRate) ? impliedInterestRate.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
-        </span>
+        </div>
       );
     },
     enableSorting: true,
@@ -198,10 +206,10 @@ export const columns: ColumnDef<FutureDto>[] = [
     cell: ({ row }) => {
       const tna: number = row.getValue("nominalInterestRate");
       return (
-        <span className="truncate font-medium flex">
+        <div className="truncate font-medium flex">
           {!isNaN(tna) ? tna.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
-        </span>
+        </div>
       );
     },
     enableSorting: true,
@@ -226,10 +234,10 @@ export const columns: ColumnDef<FutureDto>[] = [
     cell: ({ row }) => {
       const forwardTem: number = row.getValue("forwardTem");
       return (
-        <span className="truncate font-medium flex">
+        <div className="truncate font-medium flex">
           {!isNaN(forwardTem) ? forwardTem.toLocaleString("es-ES") : 0}
           <span className="ml-1">%</span>
-        </span>
+        </div>
       );
     },
     enableSorting: true,

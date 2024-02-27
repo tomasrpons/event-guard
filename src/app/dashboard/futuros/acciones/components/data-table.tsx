@@ -13,13 +13,14 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
-import ExpandedContent from "./expanded-content";
+import { FutureDto } from "~/hooks/use-stratex";
+import { FutureStocksTableData } from "./columns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,18 +36,27 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   const table = useReactTable({
     data,
     columns,
+    initialState: {
+      expanded: true,
+    },
     state: {
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
     },
+    getExpandedRowModel: getExpandedRowModel(),
     enableRowSelection: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
+    getRowCanExpand: () => true,
+    getSubRows: (row) => {
+      const data = row as FutureStocksTableData;
+      return data.subRows;
+    },
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
@@ -72,22 +82,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <Collapsible key={row.id} asChild>
-                  <>
-                    <CollapsibleTrigger asChild>
-                      <TableRow data-state={row.getIsSelected() && "selected"} className="!appearance-none">
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent asChild>
-                      <ExpandedContent dollars={[]} />
-                    </CollapsibleContent>
-                  </>
-                </Collapsible>
+                <TableRow data-state={row.getIsSelected() && "selected"} key={row.id}>
+                  {row.getAllCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                </TableRow>
               ))
             ) : (
               <TableRow>
@@ -100,7 +99,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           <ScrollBar orientation="horizontal" />
         </Table>
       </ScrollArea>
-      {/* </div> */}
     </div>
   );
 }

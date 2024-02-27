@@ -17,7 +17,9 @@ export type FutureDto = Partial<Pick<ValueTypes,
     'forwardMaturity' |
     'forwardTem' |
     'forwardTemT1'
->> & TickerDto
+>> & TickerDto & {
+    subRows?: FutureDto[]
+}
 
 export type StockDto = {
     dollarMEP?: number;

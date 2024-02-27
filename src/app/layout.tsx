@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     title: "Docta Capital",
     description: "Información del mercado en tiempo real",
   },
+  other: {
+    "google-site-verification": "p-na6LWQ3tyOJZLUCh_jxX6WGdtRjE761npWUHMJmLY",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

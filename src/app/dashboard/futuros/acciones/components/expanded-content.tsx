@@ -1,4 +1,3 @@
-// components/links-visitors.tsx
 import React from "react";
 import { TableRow, TableCell } from "~/components/ui/table";
 import { type DollarDto } from "~/hooks/use-stratex";
