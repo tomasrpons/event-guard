@@ -55,7 +55,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getRowCanExpand: () => true,
     getSubRows: (row) => {
       const data = row as FutureStocksTableData;
-      return data.subRows;
+      const subrows = data.subRows as unknown;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any
+      return subrows as any;
     },
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
